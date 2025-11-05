@@ -3,7 +3,9 @@ name: Deploy to GitHub Pages
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - master
 
 permissions:
   contents: read
@@ -24,23 +26,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
+          cache: 'npm'
 
       # 重要：初回に必要（これが無いと Not Found になりやすい）
       - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          enablement: true
+        uses: actions/configure-pages@v4
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci --prefix web
 
-      - name: Build
+      - name: Build Next.js
         run: npm run --prefix web build
+        env:
+          NODE_ENV: production
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
