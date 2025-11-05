@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 20
 
-      # 重要：初回に必要（これが無いと Not Found になりやすい）
+      # 重要：GitHub Pagesの初回セットアップに必要（これが無いとデプロイ後に404エラーが発生する可能性があります）
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
