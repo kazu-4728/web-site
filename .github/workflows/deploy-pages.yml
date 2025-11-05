@@ -32,6 +32,9 @@ jobs:
       # 重要：初回に必要（これが無いと Not Found になりやすい）
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          enablement: true
 
       - name: Install deps
         run: npm ci --prefix web
