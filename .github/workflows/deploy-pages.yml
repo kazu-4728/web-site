@@ -1,12 +1,19 @@
 name: Deploy to GitHub Pages
+
 on:
   workflow_dispatch:
   push:
     branches: [ feat/ui-phase1-next-export ]
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     environment:
@@ -14,14 +21,32 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm i --prefix web
-      - run: npm run --prefix web build
-      - uses: actions/upload-pages-artifact@v3
+
+      # 重要：初回に必要（これが無いと Not Found になりやすい）
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install deps
+        run: npm i --prefix web
+
+      - name: Build
+        run: npm run --prefix web build
+
+      - name: Export static site
+        run: npm run --prefix web export
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: web/out
-      - id: deployment
+
+      - name: Deploy to Pages
+        id: deployment
         uses: actions/deploy-pages@v4
