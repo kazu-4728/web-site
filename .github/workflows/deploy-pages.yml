@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   workflow_dispatch:
   push:
-    branches: [ feat/ui-phase1-next-export ]
+    branches: [ main ]
 
 permissions:
   contents: read
