@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [ feat/ui-phase1-next-export ]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
