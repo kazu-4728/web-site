@@ -1,5 +1,9 @@
 # GitHub Copilot Instructions for web-site
 
+## Language Preference
+- Use Japanese (日本語) for all responses and communications
+- Provide code comments in Japanese when adding explanations
+
 ## Project Overview
 This is a web-site repository for managing web content and related files.
 
