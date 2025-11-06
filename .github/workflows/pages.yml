@@ -22,7 +22,10 @@ jobs:
         run: npm ci
       - name: Build (Next.js static export)
         working-directory: web
-        run: npm run build
+        # Next.jsの静的エクスポートには`next build`の後に`next export`が必要です
+        run: |
+          npm run build
+          npx next export
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with: { path: web/out }
