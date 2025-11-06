@@ -188,4 +188,4 @@ web-site/
 
 ---
 
-© 2024 GitHub Docs 完全マニュアル
+© 2025 GitHub Docs 完全マニュアル
