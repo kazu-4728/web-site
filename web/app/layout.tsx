@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="main-content">{children}</main>
         <footer className="site-footer">
           <div className="footer-container">
-            <p>&copy; 2024 GitHub Docs 完全マニュアル. All rights reserved.</p>
+            <p>&copy; 2025 GitHub Docs 完全マニュアル. All rights reserved.</p>
             <p className="footer-note">このサイトはGitHub Pagesでホスティングされています。</p>
           </div>
         </footer>
