@@ -75,29 +75,66 @@ npm run build
 
 ## GitHub Pagesへのデプロイ
 
-### 方法1: GitHub Actionsを使用（推奨）
+### 自動デプロイ（推奨）
 
-1. `.github/workflows/deploy.yml` を作成（必要に応じて）
-2. リポジトリのSettings > Pagesで、GitHub Actionsをソースとして選択
-3. ビルドが完了すると自動的にデプロイされます
+このプロジェクトは、GitHub Actionsを使用して自動的にGitHub Pagesにデプロイされます。
 
-### 方法2: 手動デプロイ
+#### セットアップ手順
 
-1. プロジェクトをビルド：
+1. **リポジトリの設定**
+   - リポジトリの **Settings** > **Pages** に移動
+   - **Source** で **GitHub Actions** を選択
+
+2. **自動デプロイの動作**
+   - `main` ブランチにプッシュすると自動的にデプロイが開始されます
+   - ワークフローファイル: `.github/workflows/pages.yml`
+   - ビルドとデプロイは自動的に実行されます
+
+3. **手動デプロイ**
+   - GitHub Actionsのタブから **Deploy to GitHub Pages** ワークフローを選択
+   - **Run workflow** ボタンをクリックして手動実行も可能です
+
+#### デプロイの確認方法
+
+1. **GitHub Actionsで確認**
+   - リポジトリの **Actions** タブを開く
+   - **Deploy to GitHub Pages** ワークフローを確認
+   - 緑色のチェックマークが表示されれば成功
+
+2. **デプロイされたサイトを確認**
+   - リポジトリの **Settings** > **Pages** でURLを確認
+   - 通常は `https://[ユーザー名].github.io/[リポジトリ名]/` の形式
+   - デプロイ完了後、数分でサイトが公開されます
+
+3. **ローカルでビルドを確認**
    ```bash
    cd web
+   npm install
    npm run build
    ```
+   - `web/out` ディレクトリに静的ファイルが生成されます
+   - 生成されたファイルを確認して、正しくビルドされているか確認できます
 
-2. `out` ディレクトリの内容を `gh-pages` ブランチにプッシュ：
-   ```bash
-   git checkout -b gh-pages
-   git add out
-   git commit -m "Deploy to GitHub Pages"
-   git push origin gh-pages
-   ```
+4. **ブラウザで確認**
+   - デプロイされたURLにアクセス
+   - 最新のデザインとコンテンツが表示されているか確認
+   - すべてのページが正しく動作するか確認
 
-3. リポジトリのSettings > Pagesで、`gh-pages` ブランチをソースとして選択
+#### トラブルシューティング
+
+- **デプロイが失敗する場合**
+  - GitHub Actionsのログを確認
+  - `main` ブランチにプッシュされているか確認
+  - リポジトリのSettings > PagesでGitHub Actionsが選択されているか確認
+
+- **古いデータが表示される場合**
+  - ブラウザのキャッシュをクリア（Ctrl+Shift+R または Cmd+Shift+R）
+  - デプロイが完了するまで数分待つ
+  - GitHub Actionsで最新のデプロイが成功しているか確認
+
+- **404エラーが表示される場合**
+  - `next.config.mjs` で `trailingSlash: true` が設定されているか確認
+  - パスの大文字小文字が正しいか確認
 
 ## プロジェクト構成
 
