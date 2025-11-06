@@ -2,7 +2,7 @@ export default function Page() {
   const faqs = [
     {
       question: 'GitHubは無料で使えますか？',
-      answer: 'はい、GitHubは無料で使えます。Publicリポジトリは無制限に作成でき、Privateリポジトリも無料プランでは月に3つまで作成できます。チーム機能や高度な機能を使う場合は有料プランが必要です。'
+      answer: 'はい、GitHubは無料で使えます。PublicリポジトリもPrivateリポジトリも無料プランで無制限に作成できます。チーム機能や高度な機能を使う場合は有料プランが必要です。'
     },
     {
       question: 'GitとGitHubの違いは何ですか？',
