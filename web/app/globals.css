@@ -426,11 +426,7 @@ html, body {
   border-color: rgba(34, 197, 94, 0.3);
 }
 
-.product-badge-intermediate {
-  background: rgba(255, 138, 61, 0.2);
-  color: #ff8a3d;
-  border-color: rgba(255, 138, 61, 0.3);
-}
+/* .product-badge-intermediate の重複スタイル定義を削除しました */
 
 .product-badge-advanced {
   background: rgba(239, 68, 68, 0.2);
