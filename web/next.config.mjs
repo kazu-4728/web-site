@@ -1,7 +1,8 @@
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '/web-site';
+
 export default {
   output: 'export',
-  trailingSlash: true,
+  basePath: base,
+  assetPrefix: base ? `${base}/` : '',
   images: { unoptimized: true },
-  basePath: '/web-site',        // 追加
-  assetPrefix: '/web-site',     // 追加
 };
