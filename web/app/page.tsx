@@ -53,7 +53,7 @@ export default function Page() {
           <p className="section-description">GitHubの基礎から応用まで、すべてを網羅</p>
         </div>
         <div className="products-grid">
-          {githubDocs.map((topic, index) => (
+          {githubDocs.map(topic => (
             <Link key={topic.id} href={`/docs/${topic.id}`} className="product-card">
               <div className="product-header">
                 <div className="product-icon-wrapper">
