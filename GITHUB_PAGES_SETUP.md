@@ -38,7 +38,7 @@ GitHub Pagesの設定を「GitHub Actions」に変更する必要があります
 ### 正常に動作しているワークフロー
 
 ✅ **Deploy to GitHub Pages** (`.github/workflows/pages.yml`)
-- 実行履歴: Run #2〜#7すべて成功
+- 実行履歴: 直近の連続実行がすべて成功
 - デプロイ先: https://kazu-4728.github.io/web-site/
 - このワークフローは完全に機能しています
 
