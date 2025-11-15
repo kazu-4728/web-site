@@ -12,7 +12,7 @@
 2. ❌ **エラー発生**: レガシーJekyll自動ビルド（`pages-build-deployment`）
    - GitHub Pagesの古い設定により自動実行
    - 存在しない`/docs`ディレクトリからビルドしようとしている
-   - エラー: `No such file or directory @ dir_chdir0 - /github/workspace/docs`
+   - エラー: `No such file or directory @ dir_chdir - /github/workspace/docs`
 
 ## 解決方法
 
