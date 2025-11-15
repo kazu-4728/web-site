@@ -27,7 +27,15 @@ describe('ホームページのコンテンツ', () => {
       .getAllByRole('generic', { hidden: false })
       .filter(el => el.classList.contains('category-tag'));
     expect(categoryTags).toHaveLength(categories.length);
-    const categoryLabels = categoryTags.map(tag => tag.querySelectorAll('span')[1]?.textContent?.trim());
+    // より堅牢な方法でラベルを取得（spanのインデックス依存を排除）
+    const categoryLabels = categoryTags.map(tag => {
+      // category-tag内のspan要素のうち、カテゴリ名と一致するものを取得
+      // ここではcategories配列のいずれかと一致するテキストを持つspanを探す
+      const label = Array.from(tag.querySelectorAll('span')).find(
+        (el) => categories.includes(el.textContent?.trim() || '')
+      );
+      return label?.textContent?.trim();
+    });
     expect(categoryLabels).toEqual(expect.arrayContaining(categories));
 
     const productLinks = within(productsSection as HTMLElement).getAllByRole('link');
