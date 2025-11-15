@@ -22,10 +22,10 @@ describe('ホームページのコンテンツ', () => {
     expect(categoriesSection).not.toBeNull();
     expect(productsSection).not.toBeNull();
 
-    const categoryTags = within(categoriesSection as HTMLElement).getAllByText(
-      (_, element) => element instanceof HTMLElement && element.classList.contains('category-tag'),
-      { selector: 'div' },
-    );
+    // getAllByText の代わりに getAllByRole で取得し、クラス名でフィルタリング
+    const categoryTags = within(categoriesSection as HTMLElement)
+      .getAllByRole('generic', { hidden: false })
+      .filter(el => el.classList.contains('category-tag'));
     expect(categoryTags).toHaveLength(categories.length);
     const categoryLabels = categoryTags.map(tag => tag.querySelectorAll('span')[1]?.textContent?.trim());
     expect(categoryLabels).toEqual(expect.arrayContaining(categories));
