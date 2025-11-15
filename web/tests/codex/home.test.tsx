@@ -40,9 +40,9 @@ describe('ホームページのコンテンツ', () => {
 
     const productLinks = within(productsSection as HTMLElement).getAllByRole('link');
     expect(productLinks).toHaveLength(githubDocs.length);
-    // クラス名依存を避け、見出し要素(h3)をロールで取得
+    // クラス名依存を避け、見出し要素(h2)をロールで取得
     const productTitles = productLinks.map(link =>
-      within(link as HTMLElement).getByRole('heading', { level: 3 })?.textContent?.trim()
+      within(link as HTMLElement).getByRole('heading', { level: 2 })?.textContent?.trim()
     );
     expect(productTitles).toEqual(expect.arrayContaining(githubDocs.map(doc => doc.title)));
   });
