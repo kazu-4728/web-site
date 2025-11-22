@@ -24,6 +24,7 @@ export const topicImages: Record<string, string> = {
   'pull-requests': '1556761175-4b46a572b786', // コード
   'issues': '1484480974693-6ca0a78fb36b', // 付箋・タスク
   'github-actions': '1551288049-1640f4a66fea', // 自動化
+  'default': '1618401471353-b98afee0b2eb', // デフォルト画像
 };
 
 // Hero画像のプリセット
