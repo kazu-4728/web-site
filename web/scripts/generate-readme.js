@@ -51,12 +51,14 @@ function generateReadme() {
   const actionsUrl = `https://github.com/${repoName}/actions`;
   const issuesUrl = `https://github.com/${repoName}/issues`;
   
-  const readme = `# 🚀 Professional Website Template
+  const readme = `# 🚀 GitHub Docs 完全マニュアル
 
 [![Deploy to GitHub Pages](https://github.com/${repoName}/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](${actionsUrl})
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Topics](https://img.shields.io/badge/Topics-${config.topics}-blue)
+![Categories](https://img.shields.io/badge/Categories-${config.categories}-green)
 
-> **美しく洗練されたWebサイトテンプレート** - Next.js 15 + TypeScript + Framer Motion
+> **Stripeレベルのデザイン** - Next.js 15 + TypeScript + Framer Motion + Tailwind CSS 4.0
 
 ## 🌐 ライブデモ
 

@@ -1,15 +1,17 @@
-# 🚀 Professional Website Template
+# 🚀 GitHub Docs 完全マニュアル
 
-[![Deploy to GitHub Pages](https://github.com/kazu-4728/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/kazu-4728/web-site/actions)
+[![Deploy to GitHub Pages](https://github.com/your-username/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/your-username/web-site/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Topics](https://img.shields.io/badge/Topics-22-blue)
+![Categories](https://img.shields.io/badge/Categories-5-green)
 
-> **美しく洗練されたWebサイトテンプレート** - Next.js 15 + TypeScript + Framer Motion
+> **Stripeレベルのデザイン** - Next.js 15 + TypeScript + Framer Motion + Tailwind CSS 4.0
 
 ## 🌐 ライブデモ
 
-**🔗 [https://kazu-4728.github.io/web-site/](https://kazu-4728.github.io/web-site/)**
+**🔗 [https://your-username.github.io/web-site/](https://your-username.github.io/web-site/)**
 
-最新のデプロイ状況: [GitHub Actions](https://github.com/kazu-4728/web-site/actions)
+最新のデプロイ状況: [GitHub Actions](https://github.com/your-username/web-site/actions)
 
 ---
 
@@ -53,7 +55,7 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/kazu-4728/web-site.git
+git clone https://github.com/your-username/web-site.git
 cd web-site
 
 # 依存関係をインストール
@@ -203,7 +205,7 @@ web-site/
 
 ### 手動デプロイ
 
-1. [GitHub Actions](https://github.com/kazu-4728/web-site/actions)を開く
+1. [GitHub Actions](https://github.com/your-username/web-site/actions)を開く
 2. "Deploy to GitHub Pages" を選択
 3. "Run workflow" をクリック
 
@@ -229,8 +231,8 @@ web-site/
 
 ## 🙋 質問・サポート
 
-- 📫 Issue: [https://github.com/kazu-4728/web-site/issues](https://github.com/kazu-4728/web-site/issues)
-- 📖 ドキュメント: [サイト内FAQ](https://kazu-4728.github.io/web-site/faq/)
+- 📫 Issue: [https://github.com/your-username/web-site/issues](https://github.com/your-username/web-site/issues)
+- 📖 ドキュメント: [サイト内FAQ](https://your-username.github.io/web-site/faq/)
 
 ---
 
