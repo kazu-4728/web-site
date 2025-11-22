@@ -2,6 +2,17 @@ import '@testing-library/jest-dom/vitest';
 import type { AnchorHTMLAttributes, PropsWithChildren } from 'react';
 import { vi } from 'vitest';
 
+// IntersectionObserver のモック
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+  takeRecords() {
+    return [];
+  }
+} as any;
+
 type Href = string | URL | { pathname?: string } | undefined;
 type MockLinkProps = PropsWithChildren<AnchorHTMLAttributes<HTMLAnchorElement> & { href?: Href }>;
 
