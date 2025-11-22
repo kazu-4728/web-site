@@ -1,164 +1,180 @@
 #!/usr/bin/env node
+
 /**
- * リンクチェックスクリプト
- * - 内部リンクの有効性確認
+ * 内部リンクチェックスクリプト
  * - 存在しないページへのリンクを検出
+ * - 動的ルートを正しく認識
+ * - 修正提案を提供
  */
 
 const fs = require('fs');
 const path = require('path');
 
+const appDir = path.join(__dirname, '..', 'app');
 const errors = [];
 const warnings = [];
 
-// ファイル検索
-function findFiles(dir, ext) {
-  const files = [];
-  const items = fs.readdirSync(dir, { withFileTypes: true });
+// すべてのルートを取得
+function getRoutes(dir, basePath = '') {
+  const routes = new Set();
+  
+  if (!fs.existsSync(dir)) return routes;
+  
+  const items = fs.readdirSync(dir);
   
   for (const item of items) {
-    const fullPath = path.join(dir, item.name);
-    if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
-      files.push(...findFiles(fullPath, ext));
-    } else if (item.isFile() && item.name.endsWith(ext)) {
-      files.push(fullPath);
-    }
-  }
-  
-  return files;
-}
-
-// ルート一覧を取得
-function getRoutes(appDir) {
-  const routes = new Set(['/']);
-  
-  function scanDir(dir, basePath = '') {
-    const items = fs.readdirSync(dir, { withFileTypes: true });
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
     
-    for (const item of items) {
-      if (item.isDirectory() && !item.name.startsWith('.') && !item.name.startsWith('_')) {
-        const dirPath = path.join(dir, item.name);
-        const routePath = `${basePath}/${item.name}`;
+    if (stat.isDirectory() && !item.startsWith('.') && !item.startsWith('_')) {
+      const routePath = `${basePath}/${item}`;
+      
+      // page.tsxがあればルートとして認識
+      const pagePath = path.join(fullPath, 'page.tsx');
+      if (fs.existsSync(pagePath)) {
+        routes.add(routePath + '/');
         
-        // [id]などの動的ルート
-        if (item.name.startsWith('[') && item.name.endsWith(']')) {
-          // page.tsxがあれば動的ルートとして追加
-          if (fs.existsSync(path.join(dirPath, 'page.tsx')) || 
-              fs.existsSync(path.join(dirPath, 'page.ts'))) {
-            routes.add(routePath + '/');
-          }
-          warnings.push({
-            message: `動的ルート検出: ${routePath} (個別確認が必要)`,
-          });
-        } else {
-          // page.tsxがあればルートとして追加
-          if (fs.existsSync(path.join(dirPath, 'page.tsx')) || 
-              fs.existsSync(path.join(dirPath, 'page.ts'))) {
-            routes.add(routePath + '/');
-          }
-          scanDir(dirPath, routePath);
+        // 動的ルートの検出
+        if (item.startsWith('[') && item.endsWith(']')) {
+          routes.add(`${basePath}/${item}/`);
         }
       }
+      
+      // 再帰的に探索
+      const subRoutes = getRoutes(fullPath, routePath);
+      subRoutes.forEach(route => routes.add(route));
     }
   }
   
-  scanDir(appDir);
   return routes;
 }
 
-// リンクを抽出
-function extractLinks(content) {
-  const links = [];
+// TSX/JSXファイルからリンクを抽出
+function extractLinks(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const links = new Set();
   
-  // href="..." または href={...}
-  const hrefMatches = content.matchAll(/href=["'{]([^"'}]+)["'}]/g);
-  for (const match of hrefMatches) {
-    const link = match[1];
-    // 内部リンクのみ
-    if (link.startsWith('/') && !link.startsWith('//')) {
-      links.push(link);
+  // href="..." または href={...} パターンを検出
+  const hrefPattern = /href=["']([^"']+)["']|href=\{["']([^"']+)["']\}/g;
+  let match;
+  
+  while ((match = hrefPattern.exec(content)) !== null) {
+    const link = match[1] || match[2];
+    
+    // 内部リンクのみ（相対パスまたは/で始まる）
+    if (link && (link.startsWith('/') || link.startsWith('./'))) {
+      // クエリパラメータとハッシュを除去
+      const cleanLink = link.split('?')[0].split('#')[0];
+      
+      // 末尾にスラッシュを追加（統一のため）
+      const normalizedLink = cleanLink.endsWith('/') ? cleanLink : cleanLink + '/';
+      
+      links.add({ link: normalizedLink, file: filePath });
     }
   }
   
   return links;
 }
 
-// メイン処理
-function main() {
-  console.log('🔍 リンクチェック開始...\n');
+// すべてのTSX/JSXファイルを走査
+function scanFiles(dir) {
+  const links = [];
   
-  const appDir = path.join(__dirname, '../app');
-  const routes = getRoutes(appDir);
+  if (!fs.existsSync(dir)) return links;
   
-  console.log(`📄 検出されたルート (${routes.size}個):`);
-  routes.forEach(route => console.log(`  ${route}`));
-  console.log();
+  const items = fs.readdirSync(dir);
   
-  const tsxFiles = findFiles(appDir, '.tsx');
-  
-  for (const file of tsxFiles) {
-    const content = fs.readFileSync(file, 'utf-8');
-    const links = extractLinks(content);
+  for (const item of items) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
     
-    for (const link of links) {
-      // クエリパラメータとハッシュを除去
-      const cleanLink = link.split('?')[0].split('#')[0];
-      
-      // 末尾にスラッシュを追加して正規化
-      const normalizedLink = cleanLink.endsWith('/') ? cleanLink : cleanLink + '/';
-      
-      // ルートの存在確認
-      if (!routes.has(normalizedLink)) {
-        // 動的ルートの可能性をチェック
-        const isDynamic = Array.from(routes).some(route => {
-          // [id]などを正規表現パターンに変換
-          const routePattern = route.replace(/\[.*?\]/g, '[^/]+');
-          const regex = new RegExp(`^${routePattern}$`);
-          return regex.test(normalizedLink);
-        });
-        
-        if (!isDynamic) {
-          errors.push({
-            file: path.relative(process.cwd(), file),
-            link: link,
-            message: 'リンク先のページが存在しません',
-          });
-        } else {
-          // 動的ルートとして検出された場合は警告に追加
-          warnings.push({
-            file: path.relative(process.cwd(), file),
-            link: link,
-            message: '動的ルートへのリンク（手動で確認してください）',
-          });
-        }
+    if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+      links.push(...scanFiles(fullPath));
+    } else if (item.endsWith('.tsx') || item.endsWith('.jsx')) {
+      links.push(...extractLinks(fullPath));
+    }
+  }
+  
+  return links;
+}
+
+// 動的ルートにマッチするかチェック
+function matchesDynamicRoute(link, routes) {
+  // 完全一致
+  if (routes.has(link)) return true;
+  
+  // 動的ルートのマッチング
+  for (const route of routes) {
+    if (route.includes('[') && route.includes(']')) {
+      const pattern = route.replace(/\[([^\]]+)\]/g, '[^/]+');
+      const regex = new RegExp(`^${pattern}$`);
+      if (regex.test(link)) {
+        return true;
       }
     }
   }
   
-  // 結果表示
-  if (errors.length > 0) {
-    console.log('❌ エラー:\n');
-    errors.forEach(err => {
-      console.log(`  ${err.file}`);
-      console.log(`    リンク: ${err.link}`);
-      console.log(`    ${err.message}\n`);
-    });
-  }
+  return false;
+}
+
+// メイン処理
+console.log('🔍 内部リンクをチェック中...\n');
+
+const routes = getRoutes(appDir);
+const links = scanFiles(appDir);
+
+console.log(`📄 ${routes.size}個のルートを検出`);
+console.log(`🔗 ${links.length}個の内部リンクを検出\n`);
+
+// ルートを表示（デバッグ用）
+console.log('検出されたルート:');
+routes.forEach(route => console.log(`  - ${route}`));
+console.log();
+
+// リンクをチェック
+for (const { link, file } of links) {
+  const relativePath = path.relative(appDir, file);
   
-  if (warnings.length > 0) {
-    console.log('⚠️  警告:\n');
-    warnings.forEach(warn => {
-      console.log(`  ${warn.message}\n`);
-    });
-  }
-  
-  if (errors.length === 0) {
-    console.log('✅ リンクチェック完了: 問題なし\n');
-    process.exit(0);
-  } else {
-    console.log(`\n❌ ${errors.length}個のリンクエラーが見つかりました`);
-    process.exit(1);
+  if (!matchesDynamicRoute(link, routes)) {
+    // 外部リンクや特殊なパスは除外
+    if (
+      !link.startsWith('http') &&
+      !link.includes('://') &&
+      link !== '/' // ルートパスは常に存在すると仮定
+    ) {
+      errors.push({
+        link,
+        file: relativePath,
+      });
+    }
   }
 }
 
-main();
+// 結果を表示
+if (errors.length > 0) {
+  console.error('❌ 以下のリンク先ページが存在しません:\n');
+  errors.forEach(({ link, file }) => {
+    console.error(`  ❌ ${link}`);
+    console.error(`     ファイル: ${file}`);
+    
+    // 修正提案
+    const suggestedPath = path.join(appDir, link.slice(1), 'page.tsx');
+    console.error(`     💡 修正案: ${path.relative(process.cwd(), suggestedPath)} を作成\n`);
+  });
+  
+  console.error(`\n❌ ${errors.length}個のリンクエラーが見つかりました`);
+  console.error('\n修正方法:');
+  console.error('  1. ページを作成: npm run generate:page [template] [slug] [title]');
+  console.error('  2. リンクを修正: 正しいパスに変更');
+  console.error('  3. リンクを削除: 不要なリンクを削除\n');
+  process.exit(1);
+}
+
+if (warnings.length > 0) {
+  console.warn('⚠️  警告:\n');
+  warnings.forEach(warning => {
+    console.warn(`  ⚠️  ${warning}\n`);
+  });
+}
+
+console.log('✅ すべての内部リンクが有効です！');

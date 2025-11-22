@@ -9,9 +9,11 @@
     "test:codex": "npm run test",
     "check": "npm run check:images && npm run check:links",
     "check:images": "node scripts/check-images.js",
-    "check:links": "node scripts/check-links.js"
+    "check:links": "node scripts/check-links.js",
+    "generate:page": "node scripts/generate-page.js"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
     "framer-motion": "^11.15.0",
     "next": "^15.0.3",
     "react": "^18.3.1",
