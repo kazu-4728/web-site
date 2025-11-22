@@ -4,7 +4,7 @@ import { ContentSection } from '../components/layouts/ContentSection';
 import { Grid } from '../components/ui/Grid';
 import { ContentCard } from '../components/cards/ContentCard';
 import { Badge } from '../components/ui/Badge';
-import { topicImages, getUnsplashImage } from '../lib/images';
+import { getTopicImage } from '../lib/images';
 import { BookIcon, LayersIcon } from '../components/icons';
 
 export default function GuidesPage() {
@@ -13,7 +13,7 @@ export default function GuidesPage() {
       <PageHeader
         title="学習ガイド"
         description="GitHubの使い方を段階的に学べる、包括的なガイドコレクション"
-        backgroundImage={getUnsplashImage('photo-1516116216624-53e697fedbea?w=1920&q=80')}
+        backgroundImage="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=1920&q=80"
       />
       
       <ContentSection size="sm">
@@ -44,7 +44,7 @@ export default function GuidesPage() {
                   key={topic.id}
                   title={topic.title}
                   description={topic.description}
-                  image={getUnsplashImage(topicImages[topic.id as keyof typeof topicImages] || topicImages.default)}
+                  image={getTopicImage(topic.id)}
                   href={`/docs/${topic.id}`}
                   badge={topic.level}
                   meta={[

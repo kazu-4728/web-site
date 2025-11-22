@@ -24,7 +24,7 @@ import {
   CheckCircleIcon,
   SmartphoneIcon,
 } from './components/icons';
-import { getImage } from './lib/image-system';
+import { getImage } from './lib/images';
 
 export default function Page() {
   const featuredTopics = githubDocs.slice(0, 6);

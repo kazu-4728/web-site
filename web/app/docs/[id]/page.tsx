@@ -7,7 +7,7 @@ import { ContentSection } from '../../components/layouts/ContentSection';
 import { Container } from '../../components/ui/Container';
 import { Badge } from '../../components/ui/Badge';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { topicImages, getUnsplashImage } from '../../lib/images';
+import { getTopicImage } from '../../lib/images';
 
 export async function generateStaticParams() {
   return githubDocs.map((topic) => ({
@@ -32,7 +32,7 @@ export default async function DocPage({ params }: { params: Promise<{ id: string
       <PageHeader
         title={topic.title}
         description={topic.description}
-        backgroundImage={getUnsplashImage(topicImages[topic.id as keyof typeof topicImages] || topicImages.default)}
+        backgroundImage={getTopicImage(topic.id)}
       />
       
       <ContentSection>
