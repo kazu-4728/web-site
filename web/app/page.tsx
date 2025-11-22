@@ -70,9 +70,9 @@ export default function Page() {
               level={topic.level}
               href={`/docs/${topic.id}/`}
               meta={[
-                { icon: '📖', text: `${topic.content.sections.length} セクション` },
+                { icon: <BookIcon size={16} />, text: `${topic.content.sections.length} セクション` },
                 ...(topic.content.tips
-                  ? [{ icon: '💡', text: `${topic.content.tips.length} ヒント` }]
+                  ? [{ icon: <BookIcon size={16} />, text: `${topic.content.tips.length} ヒント` }]
                   : []),
               ]}
               variant="image-top"

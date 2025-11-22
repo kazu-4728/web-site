@@ -1,69 +1,97 @@
 import { githubDocs } from '../data/github-docs';
+import Section from '../components/Section';
+import { BookIcon, CodeIcon, GitBranchIcon } from '../components/icons';
+
+const resources = [
+  {
+    title: 'GitHub Docs（日本語）',
+    description: 'GitHubの公式ドキュメント（日本語版）',
+    url: 'https://docs.github.com/ja',
+    icon: <BookIcon size={32} />,
+  },
+  {
+    title: 'GitHub Docs（英語）',
+    description: 'GitHubの公式ドキュメント（英語版）',
+    url: 'https://docs.github.com',
+    icon: <BookIcon size={32} />,
+  },
+  {
+    title: 'Git公式ドキュメント',
+    description: 'Gitの公式ドキュメント',
+    url: 'https://git-scm.com/doc',
+    icon: <GitBranchIcon size={32} />,
+  },
+  {
+    title: 'GitHub Skills',
+    description: 'GitHubの使い方をインタラクティブに学べる公式コース',
+    url: 'https://github.com/skills',
+    icon: <CodeIcon size={32} />,
+  },
+  {
+    title: 'Learn Git Branching',
+    description: 'Gitのブランチ操作を視覚的に学べるツール',
+    url: 'https://learngitbranching.js.org/?locale=ja',
+    icon: <GitBranchIcon size={32} />,
+  },
+];
 
 export default function Page() {
   return (
-    <div className="sources-page">
-      <div className="sources-container">
-        <h1 className="page-title">参考資料</h1>
-        <p className="page-description">GitHub Docsの公式リソースと参考資料</p>
-        
-        <section className="sources-section">
-          <h2>公式ドキュメント</h2>
-          <ul className="sources-list">
-            <li>
-              <a href="https://docs.github.com/ja" target="_blank" rel="noopener noreferrer">
-                GitHub Docs（日本語）
-              </a>
-              <p>GitHubの公式ドキュメント（日本語版）</p>
-            </li>
-            <li>
-              <a href="https://docs.github.com" target="_blank" rel="noopener noreferrer">
-                GitHub Docs（英語）
-              </a>
-              <p>GitHubの公式ドキュメント（英語版）</p>
-            </li>
-            <li>
-              <a href="https://git-scm.com/doc" target="_blank" rel="noopener noreferrer">
-                Git公式ドキュメント
-              </a>
-              <p>Gitの公式ドキュメント</p>
-            </li>
-          </ul>
-        </section>
+    <div className="sources-page-modern">
+      <Section
+        title="参考資料"
+        subtitle="GitHub Docsの公式リソースと参考資料"
+        spacing="large"
+      >
+        <div className="resources-grid">
+          {resources.map((resource, index) => (
+            <a
+              key={index}
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="resource-card"
+            >
+              <div className="resource-icon-wrapper">
+                {resource.icon}
+              </div>
+              <div className="resource-content">
+                <h3 className="resource-title">{resource.title}</h3>
+                <p className="resource-description">{resource.description}</p>
+              </div>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="resource-arrow"
+              >
+                <path
+                  d="M7.5 15L12.5 10L7.5 5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+          ))}
+        </div>
 
-        <section className="sources-section">
-          <h2>学習リソース</h2>
-          <ul className="sources-list">
-            <li>
-              <a href="https://github.com/skills" target="_blank" rel="noopener noreferrer">
-                GitHub Skills
-              </a>
-              <p>GitHubの使い方をインタラクティブに学べる公式コース</p>
-            </li>
-            <li>
-              <a href="https://learngitbranching.js.org/?locale=ja" target="_blank" rel="noopener noreferrer">
-                Learn Git Branching
-              </a>
-              <p>Gitのブランチ操作を視覚的に学べるツール</p>
-            </li>
-          </ul>
-        </section>
-
-        <section className="sources-section">
-          <h2>このサイトで扱っているトピック</h2>
-          <ul className="topics-list">
-            {githubDocs.map(topic => (
-              <li key={topic.id}>
-                <span className="topic-icon">{topic.icon}</span>
-                <div>
-                  <strong>{topic.title}</strong>
-                  <p>{topic.description}</p>
+        <Section title="このサイトで扱っているトピック" spacing="default">
+          <div className="topics-grid">
+            {githubDocs.map((topic) => (
+              <a key={topic.id} href={`/docs/${topic.id}/`} className="topic-link-card">
+                <div className="topic-link-content">
+                  <h4 className="topic-link-title">{topic.title}</h4>
+                  <p className="topic-link-description">{topic.description}</p>
                 </div>
-              </li>
+              </a>
             ))}
-          </ul>
-        </section>
-      </div>
+          </div>
+        </Section>
+      </Section>
     </div>
   );
 }

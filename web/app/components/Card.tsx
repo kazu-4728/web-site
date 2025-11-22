@@ -11,7 +11,7 @@ interface CardProps {
   category?: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
   href: string;
-  meta?: { icon: string; text: string }[];
+  meta?: { icon: React.ReactNode; text: string }[];
   variant?: 'default' | 'image-top' | 'overlay' | 'minimal';
 }
 
@@ -81,7 +81,7 @@ export default function Card({
             <div className="card-meta">
               {meta.map((item, index) => (
                 <div key={index} className="card-meta-item">
-                  <span className="meta-icon">{item.icon}</span>
+                  <span className="meta-icon-svg">{item.icon}</span>
                   <span>{item.text}</span>
                 </div>
               ))}
