@@ -2,109 +2,132 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Section from '../components/Section';
+import { PageHeader } from '../components/ui/PageHeader';
+import { ContentSection } from '../components/layouts/ContentSection';
+import { Container } from '../components/ui/Container';
 
 const faqs = [
   {
+    question: 'GitHubとは何ですか？',
+    answer:
+      'GitHubは、Gitを使ったバージョン管理とコラボレーションのためのプラットフォームです。コードのホスティング、プロジェクト管理、チーム開発をサポートする多様な機能を提供しています。',
+  },
+  {
     question: 'GitHubは無料で使えますか？',
-    answer: 'はい、GitHubは無料で使えます。PublicリポジトリもPrivateリポジトリも無料プランで無制限に作成できます。チーム機能や高度な機能を使う場合は有料プランが必要です。'
+    answer:
+      'はい、GitHubは無料プランを提供しており、個人開発者や小規模チームには十分な機能が利用できます。プライベートリポジトリも無制限で作成可能です。さらに多くの機能が必要な場合は、有料プランへのアップグレードも可能です。',
   },
   {
-    question: 'GitとGitHubの違いは何ですか？',
-    answer: 'Gitはバージョン管理システム（ツール）で、GitHubはGitを使ったWebサービス（プラットフォーム）です。Gitはローカルでコードの履歴を管理し、GitHubはそのコードをクラウド上で共有・協働するためのサービスです。'
+    question: 'リポジトリとは何ですか？',
+    answer:
+      'リポジトリ（Repository）は、プロジェクトのファイルとその変更履歴を保存する場所です。コード、ドキュメント、画像など、プロジェクトに関連するあらゆるファイルを管理できます。',
   },
   {
-    question: '初心者でも使えますか？',
-    answer: 'はい、初心者でも使えます。このサイトでは、GitHubの基本的な使い方から順を追って説明しています。まずは「GitHub入門 - 初心者ガイド」から始めることをおすすめします。'
+    question: 'プルリクエストの使い方は？',
+    answer:
+      'プルリクエスト（Pull Request）は、あなたの変更を他の人にレビューしてもらい、プロジェクトに取り込んでもらうための機能です。変更内容を説明し、レビュアーからフィードバックを受けて改善することができます。',
   },
   {
-    question: 'コミットとプッシュの違いは何ですか？',
-    answer: 'コミット（commit）は、変更をローカルのリポジトリに記録することです。プッシュ（push）は、ローカルのコミットをリモート（GitHub）に送信することです。コミットだけではローカルにしか保存されず、プッシュすることでGitHubに反映されます。'
+    question: 'GitとGitHubの違いは？',
+    answer:
+      'Gitは分散型バージョン管理システム（ソフトウェア）で、GitHubはGitを使ったプロジェクトをホスティングし、コラボレーション機能を提供するWebサービスです。Gitはローカルで動作し、GitHubはクラウド上でプロジェクトを共有・管理します。',
   },
   {
-    question: 'Pull Requestとは何ですか？',
-    answer: 'Pull Request（PR）は、コードの変更を提案し、レビューを受けてからマージするための機能です。チーム開発では、直接mainブランチに変更を加えるのではなく、PRを作成してレビューを受けてからマージするのが一般的です。'
+    question: 'GitHub Actionsとは？',
+    answer:
+      'GitHub Actionsは、CI/CD（継続的インテグレーション/デリバリー）を実現する自動化ツールです。テストの実行、ビルド、デプロイなどを自動化し、開発ワークフローを効率化できます。',
   },
   {
-    question: 'フォークとクローンの違いは何ですか？',
-    answer: 'クローン（clone）は、リポジトリを自分のPCにコピーすることです。フォーク（fork）は、他人のリポジトリを自分のGitHubアカウントにコピーすることです。フォークは元のリポジトリとは独立して開発を進めることができ、後でPRを作成して変更を提案できます。'
+    question: 'オープンソースプロジェクトに貢献するには？',
+    answer:
+      'まず興味のあるプロジェクトを見つけ、Issuesやドキュメントを確認します。次に、プロジェクトをForkし、変更を加えてプルリクエストを作成します。貢献ガイドライン（CONTRIBUTING.md）がある場合は、それに従いましょう。',
   },
   {
-    question: 'GitHub Pagesとは何ですか？',
-    answer: 'GitHub Pagesは、GitHubリポジトリから直接Webサイトをホスティングできる無料のサービスです。HTML、CSS、JavaScriptなどの静的ファイルをホスティングできます。このサイトもGitHub Pagesでホスティングされています。'
+    question: 'GitHub Pagesとは？',
+    answer:
+      'GitHub Pagesは、GitHubリポジトリから直接静的Webサイトをホスティングできる無料サービスです。プロジェクトのドキュメント、ポートフォリオ、ブログなどを簡単に公開できます。',
   },
-  {
-    question: 'コンフリクト（競合）とは何ですか？',
-    answer: 'コンフリクトは、複数のブランチで同じファイルの同じ部分を異なる方法で変更した場合に発生します。Gitは自動的に解決できないため、手動で解決する必要があります。エディタでコンフリクトマーカーを見つけて、どちらの変更を採用するか決めます。'
-  }
 ];
 
-function FAQItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export default function FaqPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  
   return (
-    <motion.div
-      className="faq-item-modern"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <button
-        className="faq-question-modern"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-      >
-        <span>{faq.question}</span>
-        <motion.svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </motion.svg>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="faq-answer-modern"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <p>{faq.answer}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-export default function Page() {
-  return (
-    <div className="faq-page-modern">
-      <Section
+    <>
+      <PageHeader
         title="よくある質問"
-        subtitle="GitHubに関するよくある質問と回答"
-        spacing="large"
+        description="GitHubに関する疑問にお答えします"
+        backgroundImage="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1920&q=80"
+      />
+      
+      <ContentSection>
+        <Container size="md">
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-colors duration-300"
+              >
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors duration-200"
+                >
+                  <span className="text-xl font-semibold pr-8">{faq.question}</span>
+                  <motion.span
+                    animate={{ rotate: openIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-primary-400 text-2xl flex-shrink-0"
+                  >
+                    ↓
+                  </motion.span>
+                </button>
+                
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-8 pb-6 text-dark-300 leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
+        </Container>
+      </ContentSection>
+      
+      {/* CTA */}
+      <ContentSection
+        title="まだ疑問がありますか？"
+        subtitle="Need More Help?"
+        description="さらに詳しい情報は、学習ガイドと参考資料をご確認ください"
+        centered
+        className="bg-dark-900/30"
       >
-        <div className="faq-list-modern">
-          {faqs.map((faq, index) => (
-            <FAQItem key={index} faq={faq} index={index} />
-          ))}
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <a href="/guides">
+            <button className="btn-primary">
+              学習ガイドを見る
+            </button>
+          </a>
+          <a href="/sources">
+            <button className="btn-secondary">
+              参考資料を見る
+            </button>
+          </a>
         </div>
-      </Section>
-    </div>
+      </ContentSection>
+    </>
   );
 }
