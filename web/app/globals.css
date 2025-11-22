@@ -1797,6 +1797,15 @@ html {
   font-size: 2.5rem;
 }
 
+.category-icon-svg {
+  color: #ff8a3d;
+  transition: transform 0.3s;
+}
+
+.category-card:hover .category-icon-svg {
+  transform: scale(1.1);
+}
+
 .category-name {
   font-size: 1.125rem;
   font-weight: 600;
@@ -1839,6 +1848,32 @@ html {
 .feature-icon {
   font-size: 3rem;
   margin-bottom: 1.5rem;
+}
+
+.feature-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 138, 61, 0.1);
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s;
+}
+
+.feature-card:hover .feature-icon-wrapper {
+  background: rgba(255, 138, 61, 0.2);
+  transform: translateY(-4px);
+}
+
+.feature-icon-svg {
+  color: #ff8a3d;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover .feature-icon-svg {
+  transform: scale(1.1);
 }
 
 .feature-title {

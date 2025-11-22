@@ -1,15 +1,68 @@
-# 🚀 Professional Website Template
+#!/usr/bin/env node
+/**
+ * README自動生成スクリプト
+ * サイト設定とコンテンツデータからREADMEを生成
+ */
 
-[![Deploy to GitHub Pages](https://github.com/your-username/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/your-username/web-site/actions)
+const fs = require('fs');
+const path = require('path');
+
+// 設定とデータを読み込み
+function loadConfig() {
+  try {
+    // Next.jsのapp/data/github-docs.tsから情報を抽出
+    const dataFile = fs.readFileSync(
+      path.join(__dirname, '../app/data/github-docs.ts'),
+      'utf-8'
+    );
+    
+    // トピック数を抽出
+    const topicsMatch = dataFile.match(/export const githubDocs: GitHubDocTopic\[\] = \[([\s\S]*?)\];/);
+    const topics = topicsMatch ? topicsMatch[1].split('},').length : 0;
+    
+    // カテゴリ数を抽出
+    const categoriesMatch = dataFile.match(/export const categories = \[(.*?)\];/);
+    const categories = categoriesMatch ? categoriesMatch[1].split(',').length : 0;
+    
+    // package.jsonから情報取得
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
+    );
+    
+    return {
+      topics,
+      categories,
+      dependencies: packageJson.dependencies || {},
+      devDependencies: packageJson.devDependencies || {},
+    };
+  } catch (error) {
+    console.error('設定の読み込みエラー:', error);
+    return { topics: 0, categories: 0, dependencies: {}, devDependencies: {} };
+  }
+}
+
+// READMEを生成
+function generateReadme() {
+  const config = loadConfig();
+  const repoName = process.env.GITHUB_REPOSITORY || 'your-username/web-site';
+  const [owner, repo] = repoName.split('/');
+  
+  const deployUrl = `https://${owner}.github.io/${repo}/`;
+  const actionsUrl = `https://github.com/${repoName}/actions`;
+  const issuesUrl = `https://github.com/${repoName}/issues`;
+  
+  const readme = `# 🚀 Professional Website Template
+
+[![Deploy to GitHub Pages](https://github.com/${repoName}/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](${actionsUrl})
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **美しく洗練されたWebサイトテンプレート** - Next.js 15 + TypeScript + Framer Motion
 
 ## 🌐 ライブデモ
 
-**🔗 [https://your-username.github.io/web-site/](https://your-username.github.io/web-site/)**
+**🔗 [${deployUrl}](${deployUrl})**
 
-最新のデプロイ状況: [GitHub Actions](https://github.com/your-username/web-site/actions)
+最新のデプロイ状況: [GitHub Actions](${actionsUrl})
 
 ---
 
@@ -37,8 +90,8 @@
 
 ## 📊 現在の統計
 
-- **コンテンツ**: 22トピック、5カテゴリ
-- **依存関係**: 4個の本番依存関係
+- **コンテンツ**: ${config.topics}トピック、${config.categories}カテゴリ
+- **依存関係**: ${Object.keys(config.dependencies).length}個の本番依存関係
 - **テスト**: Vitest + React Testing Library
 
 ---
@@ -51,31 +104,31 @@
 
 ### インストール
 
-```bash
+\`\`\`bash
 # リポジトリをクローン
-git clone https://github.com/your-username/web-site.git
-cd web-site
+git clone https://github.com/${repoName}.git
+cd ${repo}
 
 # 依存関係をインストール
 cd web
 npm install
-```
+\`\`\`
 
 ### 開発サーバー起動
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
 
 ### ビルド
 
-```bash
+\`\`\`bash
 npm run build
-```
+\`\`\`
 
-静的ファイルが `web/out` に生成されます。
+静的ファイルが \`web/out\` に生成されます。
 
 ---
 
@@ -83,20 +136,20 @@ npm run build
 
 ### テスト実行
 
-```bash
+\`\`\`bash
 npm run test          # テスト実行
 npm run test:watch    # ウォッチモード
-```
+\`\`\`
 
 ### 品質チェック
 
-```bash
+\`\`\`bash
 npm run check         # すべてのチェック
 npm run check:images  # 画像チェック
 npm run check:links   # リンク切れチェック
-```
+\`\`\`
 
-**注意**: ビルド前に自動でチェックが実行されます（`prebuild`フック）
+**注意**: ビルド前に自動でチェックが実行されます（\`prebuild\`フック）
 
 ---
 
@@ -104,7 +157,7 @@ npm run check:links   # リンク切れチェック
 
 ### 1. テーマ設定ファイルを編集
 
-```typescript
+\`\`\`typescript
 // web/themes/your-theme/theme.config.ts
 export const theme = {
   colors: {
@@ -113,11 +166,11 @@ export const theme = {
   },
   // ...
 };
-```
+\`\`\`
 
 ### 2. サイト設定を更新
 
-```typescript
+\`\`\`typescript
 // web/config/site.config.ts
 export const siteConfig = {
   name: 'Your Site Name',
@@ -125,13 +178,13 @@ export const siteConfig = {
   theme: 'your-theme',
   // ...
 };
-```
+\`\`\`
 
 ---
 
 ## 📁 プロジェクト構造
 
-```
+\`\`\`
 web-site/
 ├── .github/
 │   └── workflows/          # GitHub Actions
@@ -153,7 +206,7 @@ web-site/
 │   ├── public/             # 静的アセット
 │   └── tests/              # テストファイル
 └── README.md
-```
+\`\`\`
 
 ---
 
@@ -176,7 +229,7 @@ web-site/
 
 ### 新しいトピックを追加
 
-```typescript
+\`\`\`typescript
 // web/app/data/github-docs.ts
 {
   id: 'new-topic',
@@ -185,13 +238,13 @@ web-site/
   category: 'カテゴリ',
   // ...
 }
-```
+\`\`\`
 
 ### 新しいページを追加
 
-```bash
+\`\`\`bash
 # web/app/new-page/page.tsx を作成
-```
+\`\`\`
 
 ---
 
@@ -199,11 +252,11 @@ web-site/
 
 ### GitHub Pages (自動)
 
-`main` ブランチにプッシュすると自動的にデプロイされます。
+\`main\` ブランチにプッシュすると自動的にデプロイされます。
 
 ### 手動デプロイ
 
-1. [GitHub Actions](https://github.com/your-username/web-site/actions)を開く
+1. [GitHub Actions](${actionsUrl})を開く
 2. "Deploy to GitHub Pages" を選択
 3. "Run workflow" をクリック
 
@@ -214,9 +267,9 @@ web-site/
 貢献を歓迎します！
 
 1. このリポジトリをフォーク
-2. 新しいブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+2. 新しいブランチを作成 (\`git checkout -b feature/amazing-feature\`)
+3. 変更をコミット (\`git commit -m 'Add amazing feature'\`)
+4. ブランチにプッシュ (\`git push origin feature/amazing-feature\`)
 5. Pull Request を作成
 
 ---
@@ -229,8 +282,8 @@ web-site/
 
 ## 🙋 質問・サポート
 
-- 📫 Issue: [https://github.com/your-username/web-site/issues](https://github.com/your-username/web-site/issues)
-- 📖 ドキュメント: [サイト内FAQ](https://your-username.github.io/web-site/faq/)
+- 📫 Issue: [${issuesUrl}](${issuesUrl})
+- 📖 ドキュメント: [サイト内FAQ](${deployUrl}faq/)
 
 ---
 
@@ -238,6 +291,24 @@ web-site/
 
 ---
 
-*このREADMEは自動生成されています。変更は `web/scripts/generate-readme.js` を編集してください。*
+*このREADMEは自動生成されています。変更は \`web/scripts/generate-readme.js\` を編集してください。*
 
-*最終更新: 2025/11/22*
+*最終更新: ${new Date().toLocaleDateString('ja-JP')}*
+`;
+
+  return readme;
+}
+
+// メイン処理
+function main() {
+  console.log('📝 README生成中...');
+  
+  const readme = generateReadme();
+  const outputPath = path.join(__dirname, '../../README.md');
+  
+  fs.writeFileSync(outputPath, readme, 'utf-8');
+  
+  console.log('✅ README生成完了:', outputPath);
+}
+
+main();
