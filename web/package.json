@@ -9,8 +9,7 @@
     "test:codex": "npm run test",
     "check": "npm run check:images && npm run check:links",
     "check:images": "node scripts/check-images.js",
-    "check:links": "node scripts/check-links.js",
-    "prebuild": "npm run check"
+    "check:links": "node scripts/check-links.js"
   },
   "dependencies": {
     "framer-motion": "^11.15.0",

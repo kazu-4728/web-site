@@ -1,28 +1,38 @@
-import Link from 'next/link';
 import { githubDocs } from '../data/github-docs';
+import Section from '../components/Section';
+import Card from '../components/Card';
+import { topicImages, getUnsplashImage } from '../lib/images';
+import { BookIcon } from '../components/icons';
 
 export default function Page() {
   return (
-    <div className="guides-page">
-      <div className="guides-container">
-        <h1 className="page-title">ガイド一覧</h1>
-        <p className="page-description">GitHub Docsの全トピックを学習できます</p>
-        
-        <div className="guides-grid">
-          {githubDocs.map(topic => (
-            <Link key={topic.id} href={`/docs/${topic.id}`} className="guide-card">
-              <div className="guide-icon">{topic.icon}</div>
-              <div className="guide-meta">
-                <span className="guide-category">{topic.category}</span>
-                <span className={`guide-level guide-level-${topic.level}`}>{topic.level}</span>
-              </div>
-              <h2 className="guide-title">{topic.title}</h2>
-              <p className="guide-description">{topic.description}</p>
-              <span className="guide-link">詳細を見る →</span>
-            </Link>
+    <div className="guides-page-modern">
+      <Section
+        title="ガイド一覧"
+        subtitle="GitHub Docsの全トピックを学習できます"
+        spacing="large"
+      >
+        <div className="cards-grid">
+          {githubDocs.map((topic) => (
+            <Card
+              key={topic.id}
+              title={topic.title}
+              description={topic.description}
+              image={getUnsplashImage(topicImages[topic.id] || topicImages['getting-started'], 800, 400)}
+              category={topic.category}
+              level={topic.level}
+              href={`/docs/${topic.id}/`}
+              meta={[
+                { icon: <BookIcon size={16} />, text: `${topic.content.sections.length} セクション` },
+                ...(topic.content.tips
+                  ? [{ icon: <BookIcon size={16} />, text: `${topic.content.tips.length} ヒント` }]
+                  : []),
+              ]}
+              variant="image-top"
+            />
           ))}
         </div>
-      </div>
+      </Section>
     </div>
   );
 }
