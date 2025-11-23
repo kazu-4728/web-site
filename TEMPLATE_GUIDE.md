@@ -12,13 +12,13 @@ This means that the site's content (text, images, structure) is completely decou
 ```
 /workspace
 ├── .github/            # CI/CD workflows & templates
-├── web/
-│   ├── app/            # Next.js App Router (Do not edit content here)
-│   ├── themes/         # THEME DEFINITIONS (Edit content here)
-│   │   └── github-docs/
-│   │       └── content.json  <-- MASTER DATA
-│   ├── lib/            # Data loaders
-│   └── components/     # UI Components (Presentational)
+├── app/                # Next.js App Router (Do not edit content here)
+├── themes/             # THEME DEFINITIONS (Edit content here)
+│   └── github-docs/
+│       └── content.json  <-- MASTER DATA
+├── lib/                # Data loaders
+├── components/         # UI Components (Presentational)
+├── scripts/            # Maintenance scripts
 └── README.md           # Auto-generated
 ```
 
@@ -26,19 +26,19 @@ This means that the site's content (text, images, structure) is completely decou
 
 When you are asked to update content, add pages, or change text:
 
-1.  **DO NOT edit `web/app/**/*.tsx` files for content changes.**
+1.  **DO NOT edit `app/**/*.tsx` files for content changes.**
     *   The `tsx` files are templates. Hardcoding text there breaks the theme system.
-2.  **ALWAYS edit `web/themes/github-docs/content.json`.**
+2.  **ALWAYS edit `themes/github-docs/content.json`.**
     *   This is the single source of truth.
     *   Add new entries to `docs`, `blog`, or `features` arrays to create new pages automatically.
 3.  **Check Integrity.**
-    *   After editing JSON, run `npm run check` in the `web` directory to ensure all links and images are valid.
+    *   After editing JSON, run `npm run check` in the root directory to ensure all links and images are valid.
 
 ## 🛠️ How to Extend
 
 ### Adding a New Documentation Page
 
-1.  Open `web/themes/github-docs/content.json`.
+1.  Open `themes/github-docs/content.json`.
 2.  Find the `pages.docs` array.
 3.  Add a new object:
     ```json
@@ -61,8 +61,8 @@ When you are asked to update content, add pages, or change text:
 
 ### Changing Design/Theme
 
-1.  **Colors**: Edit `web/app/globals.css` CSS variables (`--color-*`).
-2.  **Components**: Edit files in `web/app/components/`. Use Tailwind CSS.
+1.  **Colors**: Edit `app/globals.css` CSS variables (`--color-*`).
+2.  **Components**: Edit files in `app/components/`. Use Tailwind CSS.
 
 ## 🧪 Quality Control
 

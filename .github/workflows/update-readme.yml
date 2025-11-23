@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'web/app/**'
-      - 'web/package.json'
+      - 'app/**'
+      - 'package.json'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -29,7 +29,6 @@ jobs:
 
       - name: Generate README
         run: |
-          cd web
           npm ci
           node scripts/generate-readme.js
 
