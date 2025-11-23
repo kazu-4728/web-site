@@ -3,6 +3,7 @@
 [![Deploy to GitHub Pages](https://github.com/kazu-4728/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/kazu-4728/web-site/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Topics](https://img.shields.io/badge/Topics-23-blue)
+![Posts](https://img.shields.io/badge/Posts-3-purple)
 ![Status](https://img.shields.io/badge/Status-Live-green)
 
 > **単なるツールではない。開発者の人生を変える「物語」としてのGitHub完全ガイド。** - Powered by Next.js 15 & Cinematic UI
@@ -12,6 +13,45 @@
 **🔗 [https://kazu-4728.github.io/web-site/](https://kazu-4728.github.io/web-site/)**
 
 最新のデプロイ状況: [GitHub Actions](https://github.com/kazu-4728/web-site/actions)
+
+---
+
+## 🗺️ サイトマップ
+
+このサイトの構造は `content.json` から自動生成されています。
+
+- [Home](/)
+- [The Journey](/docs)
+  - [始まりの場所：GitHub入門](/docs/getting-started)
+  - [Gitのセットアップ](/docs/setup-git)
+  - [リポジトリの基礎](/docs/repository-basics)
+  - [コミットとプッシュ](/docs/commit-and-push)
+  - [ブランチの魔法](/docs/branching)
+  - [フォークとクローン](/docs/fork-and-clone)
+  - [交差する運命：チーム開発](/docs/collaboration)
+  - [Pull Request (PR)](/docs/pull-requests)
+  - [コードレビュー](/docs/code-review)
+  - [マージ戦略](/docs/merge-strategies)
+  - [Issues活用術](/docs/issues)
+  - [GitHub Projects](/docs/projects)
+  - [Wikiドキュメント](/docs/wiki)
+  - [Insightsと分析](/docs/insights)
+  - [リポジトリ設定](/docs/settings)
+  - [魔法の杖：GitHub Actions](/docs/actions)
+  - [Actions実践パターン](/docs/actions-practice)
+  - [GitHub Packages](/docs/packages)
+  - [GitHub Pages](/docs/pages)
+  - [未来の相棒：GitHub Copilot](/docs/copilot)
+  - [鉄壁の守り：Advanced Security](/docs/security)
+  - [Dependabot](/docs/dependabot)
+  - [Secret Scanning](/docs/secret-scanning)
+- [Blog](/blog)
+  - [コーディングの未来: AIとの共創](/blog/future-of-coding)
+  - [チームベロシティを最大化する](/blog/team-velocity)
+  - [セキュリティ・ファーストの思想](/blog/security-first)
+- [Showcase](/features)
+- [Join Us](/contact)
+
 
 ---
 
@@ -39,8 +79,9 @@
 
 ## 📊 プロジェクト統計
 
-- **トピック数**: 23 Chapters
-- **総ページ数**: 約 28 ページ
+- **ドキュメント数**: 23 Chapters
+- **ブログ記事数**: 3 Stories
+- **総ページ数**: 約 31 ページ
 - **依存パッケージ**: 7 個
 
 ---
