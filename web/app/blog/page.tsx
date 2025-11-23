@@ -3,50 +3,36 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRightIcon, CalendarIcon, ClockIcon } from 'lucide-react';
 
-// プレースホルダーではなく、実際のブログ記事をリスト表示する
 export default async function BlogPage() {
-  // 将来的にはcontent.jsonからブログ記事を取得
-  // 現在はモックデータを使用するが、デザインは本番レベルにする
-  const posts = [
-    {
-      slug: 'future-of-coding',
-      title: 'コーディングの未来: AIとの共創',
-      excerpt: 'GitHub Copilotが変える開発体験。私たちはもはや「コードを書く」だけの存在ではありません。',
-      date: '2024.05.15',
-      readTime: '5 min',
-      category: 'Thought',
-      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop'
-    },
-    {
-      slug: 'team-velocity',
-      title: 'チームベロシティを最大化する',
-      excerpt: 'コンフリクトを恐れず、高速にイテレーションを回すためのGitHub活用術。',
-      date: '2024.05.10',
-      readTime: '8 min',
-      category: 'Engineering',
-      image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop'
-    },
-    {
-      slug: 'security-first',
-      title: 'セキュリティ・ファーストの思想',
-      excerpt: '開発サイクルの左側にセキュリティをシフトする。脆弱性とは無縁の世界へ。',
-      date: '2024.05.01',
-      readTime: '6 min',
-      category: 'Security',
-      image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2000&auto=format&fit=crop'
-    }
-  ];
+  const content = await loadContent();
+  const blogData = content.pages.blog;
+
+  if (!blogData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-950 text-white">
+        Blog content not found.
+      </div>
+    );
+  }
+
+  const { posts } = blogData;
+  if (posts.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-950 text-white">
+        No posts found.
+      </div>
+    );
+  }
 
   return (
     <main className="bg-dark-950 min-h-screen pt-24 pb-20">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">
-          <span className="text-gradient-cyan">Stories</span> form the Voyage
+          {blogData.title}
         </h1>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-          技術の最前線で戦う開発者たちの物語。
-          成功、失敗、そして発見の記録。
+          {blogData.description}
         </p>
       </div>
 

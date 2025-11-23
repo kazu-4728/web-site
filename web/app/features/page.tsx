@@ -2,29 +2,26 @@ import { loadContent } from '../lib/content';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../components/ui/Button';
-import { ArrowRightIcon, ZapIcon, ShieldIcon, CpuIcon } from 'lucide-react';
+import { ZapIcon, ShieldIcon, CpuIcon } from 'lucide-react';
+
+// Icon mapper
+const iconMap: Record<string, React.ReactNode> = {
+  zap: <ZapIcon className="w-8 h-8" />,
+  shield: <ShieldIcon className="w-8 h-8" />,
+  cpu: <CpuIcon className="w-8 h-8" />,
+};
 
 export default async function FeaturesPage() {
-  const features = [
-    {
-      icon: <ZapIcon className="w-8 h-8" />,
-      title: "Instant Deploy",
-      description: "Push to git, and your site is live. No complex configuration required.",
-      image: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=2000&auto=format&fit=crop"
-    },
-    {
-      icon: <ShieldIcon className="w-8 h-8" />,
-      title: "Enterprise Security",
-      description: "Bank-grade security built into every layer of the platform.",
-      image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2000&auto=format&fit=crop"
-    },
-    {
-      icon: <CpuIcon className="w-8 h-8" />,
-      title: "AI Powered",
-      description: "Built-in AI agents optimize your workflow automatically.",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop"
-    }
-  ];
+  const content = await loadContent();
+  const featuresData = content.pages.features;
+
+  if (!featuresData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-950 text-white">
+        Features content not found.
+      </div>
+    );
+  }
 
   return (
     <main className="bg-dark-950 min-h-screen">
@@ -32,7 +29,7 @@ export default async function FeaturesPage() {
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2000&auto=format&fit=crop"
+            src={featuresData.hero.image}
             alt="Features Hero"
             fill
             className="object-cover"
@@ -43,14 +40,14 @@ export default async function FeaturesPage() {
 
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
           <p className="text-primary-400 font-mono mb-6 tracking-widest uppercase animate-fade-in-up">
-            System Capabilities
+            {featuresData.hero.subtitle}
           </p>
-          <h1 className="text-6xl md:text-8xl font-bold text-white mb-8 tracking-tighter animate-fade-in-up delay-100">
-            Built for the <span className="text-gradient-purple">Future</span>
-          </h1>
+          <h1 
+            className="text-6xl md:text-8xl font-bold text-white mb-8 tracking-tighter animate-fade-in-up delay-100"
+            dangerouslySetInnerHTML={{ __html: featuresData.hero.title }} // Allow HTML for gradient span
+          />
           <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-12 animate-fade-in-up delay-200">
-            Experience the next generation of development tools. 
-            Designed for speed, security, and scalability.
+            {featuresData.hero.description}
           </p>
         </div>
       </section>
@@ -58,10 +55,10 @@ export default async function FeaturesPage() {
       {/* Feature Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 -mt-32 relative z-20">
         <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, i) => (
+          {featuresData.items.map((feature, i) => (
             <div key={i} className="card-glass rounded-2xl p-8 backdrop-blur-xl bg-dark-900/80">
               <div className="w-16 h-16 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 mb-6 border border-primary-500/20">
-                {feature.icon}
+                {iconMap[feature.icon] || <ZapIcon className="w-8 h-8" />}
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
               <p className="text-gray-400 leading-relaxed mb-8">

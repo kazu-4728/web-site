@@ -1,7 +1,10 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// 型定義
+// ==========================================
+// TYPE DEFINITIONS
+// ==========================================
+
 export interface ContentConfig {
   site: {
     name: string;
@@ -16,36 +19,57 @@ export interface ContentConfig {
     label: string;
     href: string;
     variant?: 'primary' | 'secondary';
+    submenu?: Array<{ label: string; href: string }>;
   }>;
   pages: {
     home: {
-      hero: {
-        type: string;
-        title: string;
-        subtitle: string;
-        description: string;
-        bgImage: string;
-        overlay: string;
-        actions: Array<{
-          label: string;
-          href: string;
-          variant: 'primary' | 'secondary';
-        }>;
-      };
+      hero: HomeHero;
       sections: Array<HomeSection>;
     };
     docs?: Array<DocPage>;
+    blog?: {
+      title: string;
+      description: string;
+      posts: Array<BlogPost>;
+    };
+    features?: {
+      title: string;
+      description: string;
+      hero: {
+        title: string;
+        subtitle: string;
+        description: string;
+        image: string;
+      };
+      items: Array<{
+        title: string;
+        description: string;
+        icon: string; // SVG icon name or identifier
+        image: string;
+      }>;
+    };
+    contact?: {
+      title: string;
+      description: string;
+      email: string;
+      office: string;
+    };
   };
 }
 
-export interface DocPage {
-  slug: string;
+// --- Home Types ---
+export interface HomeHero {
+  type: string;
   title: string;
-  subtitle?: string;
+  subtitle: string;
   description: string;
-  image: string;
-  content: string;
-  related?: string[];
+  bgImage: string;
+  overlay: string;
+  actions: Array<{
+    label: string;
+    href: string;
+    variant: 'primary' | 'secondary';
+  }>;
 }
 
 export type HomeSection = 
@@ -98,11 +122,38 @@ export interface CtaSection extends BaseSection {
   action: { label: string; href: string };
 }
 
-// シングルトンでデータをキャッシュ
+// --- Doc Types ---
+export interface DocPage {
+  slug: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  image: string;
+  content: string; // Markdown
+  related?: string[];
+}
+
+// --- Blog Types ---
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string; // Markdown
+  date: string;
+  author: string;
+  category: string;
+  readTime: string;
+  image: string;
+}
+
+// ==========================================
+// DATA LOADER
+// ==========================================
+
 let cachedContent: ContentConfig | null = null;
 
 /**
- * テーマのコンテンツを読み込む
+ * Load theme content from JSON
  */
 export async function loadContent(): Promise<ContentConfig> {
   if (cachedContent) return cachedContent;
@@ -121,7 +172,7 @@ export async function loadContent(): Promise<ContentConfig> {
 }
 
 /**
- * ドキュメントページを個別に取得
+ * Get specific doc page
  */
 export async function getDocPage(slug: string): Promise<DocPage | undefined> {
   const content = await loadContent();
@@ -129,14 +180,33 @@ export async function getDocPage(slug: string): Promise<DocPage | undefined> {
 }
 
 /**
- * 全てのドキュメントページのスラッグを取得（静的生成用）
+ * Get all doc slugs
  */
 export async function getAllDocSlugs(): Promise<string[]> {
   const content = await loadContent();
   return content.pages.docs?.map(page => page.slug) || [];
 }
 
-// フォールバック用データ
+/**
+ * Get specific blog post
+ */
+export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
+  const content = await loadContent();
+  return content.pages.blog?.posts.find(post => post.slug === slug);
+}
+
+/**
+ * Get all blog slugs
+ */
+export async function getAllBlogSlugs(): Promise<string[]> {
+  const content = await loadContent();
+  return content.pages.blog?.posts.map(post => post.slug) || [];
+}
+
+// ==========================================
+// FALLBACK DATA
+// ==========================================
+
 const fallbackContent: ContentConfig = {
   site: {
     name: "Error Loading Theme",

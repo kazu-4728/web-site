@@ -64,9 +64,9 @@ function getValidDynamicRoutes() {
         });
       }
       
-      // Blog pages (将来的に追加された場合)
-      if (content.pages?.blog) {
-        content.pages.blog.forEach(post => {
+      // Blog pages
+      if (content.pages?.blog?.posts) {
+        content.pages.blog.posts.forEach(post => {
           valid.add(`/blog/${post.slug}`);
         });
       }
@@ -164,16 +164,20 @@ allLinks.forEach(({ link, file }) => {
   let matchedWildcard = false;
   for (const wildcard of wildcardRoutes) {
     if (link.startsWith(wildcard)) {
-      // ワイルドカードにはマッチしたが、動的ルートのリスト（validDynamicRoutes）にはない
-      // -> つまり、存在しない記事へのリンクの可能性が高い
-      // ただし、content.json以外で定義された動的ページ（将来的な実装）の可能性も考慮し、
-      // ここではWarningにとどめるか、厳格にErrorにするか。
-      // 今回は「ページ数を増やして作成されていないページを無くす」指示があるため、厳格にチェックする。
+      matchedWildcard = true;
+      // ワイルドカードにマッチした場合、その具体的slugが有効かどうかを確認
+      // validDynamicRoutesに含まれていなければエラー
+      // ただし、validDynamicRoutesはcontent.jsonから生成されたものだけなので、
+      // content.json外で動的に生成されるページがある場合は誤検知の可能性があるが、
+      // 今回のアーキテクチャではcontent.jsonが正解なので厳格にチェックする。
       
-      // しかし、/docs/[slug] の [slug] が content.json に定義されているなら validDynamicRoutes に入っているはず。
-      // 入っていないということは、定義されていないコンテンツへのリンク。
-      matchedWildcard = true; 
-      break;
+      if (!dynamicRoutes.has(link) && !dynamicRoutes.has(link + '/')) {
+         // エラー: パス形式は合っているが、データが存在しない
+         const relPath = file === 'content.json' ? file : path.relative(process.cwd(), file);
+         errors.push({ link, file: relPath, reason: 'Slug not found in data' });
+         return;
+      }
+      return; // 有効な動的ルート
     }
   }
 
@@ -182,13 +186,13 @@ allLinks.forEach(({ link, file }) => {
 
   // エラー登録
   const relPath = file === 'content.json' ? file : path.relative(process.cwd(), file);
-  errors.push({ link, file: relPath });
+  errors.push({ link, file: relPath, reason: 'Route not found' });
 });
 
 if (errors.length > 0) {
   console.error('❌ 以下のリンク切れが見つかりました:\n');
   errors.forEach(e => {
-    console.error(`  🔗 ${e.link} (in ${e.file})`);
+    console.error(`  🔗 ${e.link} (in ${e.file}) - ${e.reason}`);
   });
   console.error(`\n計 ${errors.length} 件のエラー`);
   process.exit(1);
