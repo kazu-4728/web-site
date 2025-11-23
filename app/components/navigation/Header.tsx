@@ -21,7 +21,7 @@ const navigation = [
       { name: 'Automation', href: '/docs/actions' },
     ]
   },
-  { name: 'Stories', href: '/blog' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Showcase', href: '/features' },
 ];
 

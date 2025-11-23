@@ -11,7 +11,7 @@
   "navigation": [
     { "label": "Home", "href": "/" },
     { "label": "The Journey", "href": "/docs" },
-    { "label": "Stories", "href": "/blog" },
+    { "label": "Blog", "href": "/blog" },
     { "label": "Showcase", "href": "/features" },
     { "label": "Join Us", "href": "/contact", "variant": "primary" }
   ],
