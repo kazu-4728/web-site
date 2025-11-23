@@ -7,7 +7,7 @@ interface CodeBlockProps {
   language?: string;
 }
 
-export default function CodeBlock({ code, language = 'bash' }: CodeBlockProps) {
+export function CodeBlock({ code, language = 'bash' }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -37,3 +37,5 @@ export default function CodeBlock({ code, language = 'bash' }: CodeBlockProps) {
     </div>
   );
 }
+
+export default CodeBlock;
