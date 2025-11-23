@@ -1,6 +1,8 @@
 {
-  "name": "web-site",
+  "name": "code-voyage",
+  "version": "2.0.0",
   "private": true,
+  "description": "A high-impact, fully JSON-driven Next.js template for documentation and marketing sites.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -8,11 +10,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:codex": "npm run test",
     "check": "npm run check:images && npm run check:links",
     "check:images": "node scripts/check-images.js",
-    "check:links": "node scripts/check-links.js",
-    "generate:page": "node scripts/generate-page.js"
+    "check:links": "node scripts/check-links.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.17",
