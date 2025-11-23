@@ -42,13 +42,16 @@ jobs:
       - name: Build Next.js static export
         run: npm run build
 
+      - name: Add .nojekyll to build output
+        run: touch out/.nojekyll
+
       - name: Debug output directory
-        run: ls -R out || echo "out directory not found"
+        run: ls -la out
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: out
 
   deploy:
     needs: build
