@@ -2,7 +2,7 @@
 
 [![Deploy to GitHub Pages](https://github.com/kazu-4728/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/kazu-4728/web-site/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Topics](https://img.shields.io/badge/Topics-6-blue)
+![Topics](https://img.shields.io/badge/Topics-23-blue)
 ![Status](https://img.shields.io/badge/Status-Live-green)
 
 > **単なるツールではない。開発者の人生を変える「物語」としてのGitHub完全ガイド。** - Powered by Next.js 15 & Cinematic UI
@@ -39,8 +39,8 @@
 
 ## 📊 プロジェクト統計
 
-- **トピック数**: 6 Chapters
-- **総ページ数**: 約 11 ページ
+- **トピック数**: 23 Chapters
+- **総ページ数**: 約 28 ページ
 - **依存パッケージ**: 6 個
 
 ---
