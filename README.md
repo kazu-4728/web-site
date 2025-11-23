@@ -1,6 +1,6 @@
 # 🚀 Code Voyage
 
-[![Deploy to GitHub Pages](https://github.com/your-username/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/your-username/web-site/actions)
+[![Deploy to GitHub Pages](https://github.com/kazu-4728/web-site/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](https://github.com/kazu-4728/web-site/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Topics](https://img.shields.io/badge/Topics-23-blue)
 ![Status](https://img.shields.io/badge/Status-Live-green)
@@ -9,9 +9,9 @@
 
 ## 🌐 ライブデモ
 
-**🔗 [https://your-username.github.io/web-site/](https://your-username.github.io/web-site/)**
+**🔗 [https://kazu-4728.github.io/web-site/](https://kazu-4728.github.io/web-site/)**
 
-最新のデプロイ状況: [GitHub Actions](https://github.com/your-username/web-site/actions)
+最新のデプロイ状況: [GitHub Actions](https://github.com/kazu-4728/web-site/actions)
 
 ---
 
@@ -55,7 +55,7 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/your-username/web-site.git
+git clone https://github.com/kazu-4728/web-site.git
 cd web-site
 
 # 依存関係をインストール
