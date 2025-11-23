@@ -2,6 +2,7 @@
 /**
  * README自動生成スクリプト
  * サイト設定とコンテンツデータからREADMEを生成
+ * バージョン: 2.0 (JSON駆動対応)
  */
 
 const fs = require('fs');
@@ -10,34 +11,52 @@ const path = require('path');
 // 設定とデータを読み込み
 function loadConfig() {
   try {
-    // Next.jsのapp/data/github-docs.tsから情報を抽出
-    const dataFile = fs.readFileSync(
-      path.join(__dirname, '../app/data/github-docs.ts'),
-      'utf-8'
-    );
-    
-    // トピック数を抽出
-    const topicsMatch = dataFile.match(/export const githubDocs: GitHubDocTopic\[\] = \[([\s\S]*?)\];/);
-    const topics = topicsMatch ? topicsMatch[1].split('},').length : 0;
-    
-    // カテゴリ数を抽出
-    const categoriesMatch = dataFile.match(/export const categories = \[(.*?)\];/);
-    const categories = categoriesMatch ? categoriesMatch[1].split(',').length : 0;
-    
     // package.jsonから情報取得
-    const packageJson = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
-    );
+    const packageJsonPath = path.join(__dirname, '../package.json');
+    let packageJson = {};
+    if (fs.existsSync(packageJsonPath)) {
+      packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    }
     
+    // JSONテーマファイルを読み込み (デフォルト: github-docs)
+    // 注意: 環境変数がスクリプト実行時に設定されていない場合はデフォルトを使用
+    const themeName = process.env.NEXT_PUBLIC_THEME || 'github-docs';
+    const contentPath = path.join(__dirname, `../themes/${themeName}/content.json`);
+    
+    let content = {};
+    if (fs.existsSync(contentPath)) {
+      content = JSON.parse(fs.readFileSync(contentPath, 'utf-8'));
+    } else {
+      console.warn(`Warning: Theme content file not found at ${contentPath}`);
+    }
+
+    // 統計情報の抽出
+    const pages = content.pages || {};
+    const docs = content.pages?.docs || [];
+    const topics = docs.length;
+    
+    // ページ数の概算 (静的定義 + 動的ドキュメント)
+    const staticPages = 5; // Home, Blog, Features, Contact, etc.
+    const totalPages = staticPages + topics;
+
     return {
+      siteName: content.site?.name || 'Code Voyage',
+      description: content.site?.description || 'Mastering GitHub',
       topics,
-      categories,
+      totalPages,
       dependencies: packageJson.dependencies || {},
       devDependencies: packageJson.devDependencies || {},
     };
   } catch (error) {
     console.error('設定の読み込みエラー:', error);
-    return { topics: 0, categories: 0, dependencies: {}, devDependencies: {} };
+    return { 
+      siteName: 'Code Voyage', 
+      description: 'Documentation Site',
+      topics: 0, 
+      totalPages: 0, 
+      dependencies: {}, 
+      devDependencies: {} 
+    };
   }
 }
 
@@ -51,14 +70,14 @@ function generateReadme() {
   const actionsUrl = `https://github.com/${repoName}/actions`;
   const issuesUrl = `https://github.com/${repoName}/issues`;
   
-  const readme = `# 🚀 GitHub Docs 完全マニュアル
+  const readme = `# 🚀 ${config.siteName}
 
 [![Deploy to GitHub Pages](https://github.com/${repoName}/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](${actionsUrl})
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Topics](https://img.shields.io/badge/Topics-${config.topics}-blue)
-![Categories](https://img.shields.io/badge/Categories-${config.categories}-green)
+![Status](https://img.shields.io/badge/Status-Live-green)
 
-> **Stripeレベルのデザイン** - Next.js 15 + TypeScript + Framer Motion + Tailwind CSS 4.0
+> **${config.description}** - Powered by Next.js 15 & Cinematic UI
 
 ## 🌐 ライブデモ
 
@@ -70,31 +89,31 @@ function generateReadme() {
 
 ## ✨ 特徴
 
-### 🎨 デザイン
-- **モダンで美しいUI** - プロフェッショナルなデザインシステム
-- **完全レスポンシブ** - モバイル、タブレット、デスクトップ対応
-- **ダークテーマ** - 目に優しいカラーパレット
-- **スムーズなアニメーション** - Framer Motion統合
+### 🎨 Cinematic Design System
+- **没入型体験** - 映画のようなストーリーテリングUI
+- **完全レスポンシブ** - あらゆるデバイスで美しく表示
+- **JSON駆動** - コンテンツとデザインの完全分離
+- **ダークモード** - 開発者に最適化された配色
 
-### 🛠️ テンプレート機能
-- **テーマ切り替え** - 簡単にテーマを変更可能
-- **画像管理システム** - Unsplash統合、最適化対応
-- **SVGアイコンシステム** - カスタマイズ可能なアイコンセット
-- **品質チェック** - 画像・リンク切れの自動チェック
+### 🛠️ アーキテクチャ
+- **JSON Content Engine** - \`content.json\` を編集するだけでサイト構築
+- **Dynamic Routing** - コンテンツに基づいた自動ページ生成
+- **Optimized Assets** - Next.js Image による自動最適化
+- **Quality Checks** - リンク切れ・画像欠損の自動検知
 
-### 🚀 開発体験
-- **Next.js 15** - 最新の静的サイト生成
-- **TypeScript** - 型安全な開発
-- **Vitest** - 高速なテスト環境
-- **自動化** - CI/CD完備
+### 🚀 技術スタック
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4.0 + Framer Motion
+- **Testing**: Vitest
 
 ---
 
-## 📊 現在の統計
+## 📊 プロジェクト統計
 
-- **コンテンツ**: ${config.topics}トピック、${config.categories}カテゴリ
-- **依存関係**: ${Object.keys(config.dependencies).length}個の本番依存関係
-- **テスト**: Vitest + React Testing Library
+- **トピック数**: ${config.topics} Chapters
+- **総ページ数**: 約 ${config.totalPages} ページ
+- **依存パッケージ**: ${Object.keys(config.dependencies).length} 個
 
 ---
 
@@ -124,62 +143,32 @@ npm run dev
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
 
-### ビルド
+### コンテンツの編集
 
-\`\`\`bash
-npm run build
-\`\`\`
+\`web/themes/github-docs/content.json\` を編集するだけで、サイトの内容が即座に反映されます。
 
-静的ファイルが \`web/out\` に生成されます。
-
----
-
-## 🧪 テストと品質チェック
-
-### テスト実行
-
-\`\`\`bash
-npm run test          # テスト実行
-npm run test:watch    # ウォッチモード
-\`\`\`
-
-### 品質チェック
-
-\`\`\`bash
-npm run check         # すべてのチェック
-npm run check:images  # 画像チェック
-npm run check:links   # リンク切れチェック
-\`\`\`
-
-**注意**: ビルド前に自動でチェックが実行されます（\`prebuild\`フック）
-
----
-
-## 🎨 テーマのカスタマイズ
-
-### 1. テーマ設定ファイルを編集
-
-\`\`\`typescript
-// web/themes/your-theme/theme.config.ts
-export const theme = {
-  colors: {
-    primary: '#your-color',
-    // ...
+\`\`\`json
+{
+  "site": {
+    "name": "My New Site",
+    "description": "Generated by AI Agents"
   },
-  // ...
-};
+  "pages": {
+    "home": { ... }
+  }
+}
 \`\`\`
 
-### 2. サイト設定を更新
+---
 
-\`\`\`typescript
-// web/config/site.config.ts
-export const siteConfig = {
-  name: 'Your Site Name',
-  description: 'Your description',
-  theme: 'your-theme',
-  // ...
-};
+## 🧪 品質管理
+
+ビルド前に以下のスクリプトが自動実行され、品質を担保します。
+
+\`\`\`bash
+npm run check         # 総合チェック
+npm run check:images  # 画像リンク切れチェック
+npm run check:links   # 内部リンク切れチェック
 \`\`\`
 
 ---
@@ -189,107 +178,34 @@ export const siteConfig = {
 \`\`\`
 web-site/
 ├── .github/
-│   └── workflows/          # GitHub Actions
-│       ├── pages.yml       # デプロイワークフロー
-│       └── update-readme.yml # README自動更新
+│   └── workflows/          # CI/CD設定
 ├── web/
 │   ├── app/
-│   │   ├── components/     # React コンポーネント
-│   │   │   ├── icons/      # SVG アイコン
-│   │   │   ├── Card.tsx
-│   │   │   ├── Hero.tsx
-│   │   │   └── Section.tsx
-│   │   ├── data/           # コンテンツデータ
-│   │   ├── lib/            # ユーティリティ
-│   │   └── page.tsx        # ホームページ
-│   ├── config/             # サイト設定
-│   ├── themes/             # テーマファイル
-│   ├── scripts/            # ビルドスクリプト
-│   ├── public/             # 静的アセット
-│   └── tests/              # テストファイル
-└── README.md
+│   │   ├── components/     # UIコンポーネント (Cinematic UI)
+│   │   │   ├── home/       # ホーム専用コンポーネント
+│   │   │   └── ui/         # 汎用パーツ
+│   │   ├── lib/            # コンテンツローダー (JSON処理)
+│   │   ├── docs/           # ドキュメントページ (動的生成)
+│   │   └── page.tsx        # エントリポイント
+│   ├── themes/             # テーマ定義
+│   │   └── github-docs/    # デフォルトテーマ
+│   │       └── content.json # コンテンツのすべて
+│   └── scripts/            # チェック・生成スクリプト
+└── README.md               # このファイル (自動生成)
 \`\`\`
-
----
-
-## 🔧 利用技術
-
-### フロントエンド
-- [Next.js 15](https://nextjs.org/) - Reactフレームワーク
-- [TypeScript](https://www.typescriptlang.org/) - 型安全性
-- [Framer Motion](https://www.framer.com/motion/) - アニメーション
-- [React 18](https://react.dev/) - UIライブラリ
-
-### ツール・テスト
-- [Vitest](https://vitest.dev/) - テストフレームワーク
-- [Testing Library](https://testing-library.com/) - React テスト
-- [GitHub Actions](https://github.com/features/actions) - CI/CD
-
----
-
-## 📝 コンテンツの追加
-
-### 新しいトピックを追加
-
-\`\`\`typescript
-// web/app/data/github-docs.ts
-{
-  id: 'new-topic',
-  title: '新しいトピック',
-  description: '説明',
-  category: 'カテゴリ',
-  // ...
-}
-\`\`\`
-
-### 新しいページを追加
-
-\`\`\`bash
-# web/app/new-page/page.tsx を作成
-\`\`\`
-
----
-
-## 🚀 デプロイ
-
-### GitHub Pages (自動)
-
-\`main\` ブランチにプッシュすると自動的にデプロイされます。
-
-### 手動デプロイ
-
-1. [GitHub Actions](${actionsUrl})を開く
-2. "Deploy to GitHub Pages" を選択
-3. "Run workflow" をクリック
 
 ---
 
 ## 🤝 貢献
 
 貢献を歓迎します！
-
-1. このリポジトリをフォーク
-2. 新しいブランチを作成 (\`git checkout -b feature/amazing-feature\`)
-3. 変更をコミット (\`git commit -m 'Add amazing feature'\`)
-4. ブランチにプッシュ (\`git push origin feature/amazing-feature\`)
-5. Pull Request を作成
+新しいテーマの作成、コンポーネントの追加、バグ修正など、Pull Requestをお待ちしています。
 
 ---
 
 ## 📄 ライセンス
 
 このプロジェクトは [MIT License](LICENSE) の下でライセンスされています。
-
----
-
-## 🙋 質問・サポート
-
-- 📫 Issue: [${issuesUrl}](${issuesUrl})
-- 📖 ドキュメント: [サイト内FAQ](${deployUrl}faq/)
-
----
-
-**🎉 このテンプレートを使ってあなたの素晴らしいサイトを作りましょう！**
 
 ---
 
@@ -308,9 +224,13 @@ function main() {
   const readme = generateReadme();
   const outputPath = path.join(__dirname, '../../README.md');
   
-  fs.writeFileSync(outputPath, readme, 'utf-8');
-  
-  console.log('✅ README生成完了:', outputPath);
+  try {
+    fs.writeFileSync(outputPath, readme, 'utf-8');
+    console.log('✅ README生成完了:', outputPath);
+  } catch (err) {
+    console.error('❌ README書き込みエラー:', err);
+    process.exit(1);
+  }
 }
 
 main();

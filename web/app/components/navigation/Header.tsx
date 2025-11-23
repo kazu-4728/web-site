@@ -1,81 +1,74 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RocketIcon } from '../icons';
 
+// Note: Ideally this would be fetched from content.json as well, 
+// but for client component interactivity, we'll keep the structure similar 
+// to what was loaded, or pass props from a server component.
+// For now, let's define a safe fallback navigation that matches content.json's intent.
+
 const navigation = [
-  { name: 'ホーム', href: '/' },
+  { name: 'Home', href: '/' },
   { 
-    name: 'ドキュメント', 
-    href: '/docs/getting-started',
+    name: 'Journey', 
+    href: '/docs',
     submenu: [
-      { name: '入門ガイド', href: '/docs/getting-started' },
-      { name: 'リポジトリ管理', href: '/docs/repository-management' },
-      { name: 'Git基礎', href: '/docs/git-basics' },
-      { name: 'Pull Request', href: '/docs/pull-requests' },
-      { name: 'Issues', href: '/docs/issues' },
-      { name: 'GitHub Actions', href: '/docs/github-actions' },
+      { name: 'Getting Started', href: '/docs/getting-started' },
+      { name: 'Collaboration', href: '/docs/collaboration' },
+      { name: 'Automation', href: '/docs/actions' },
     ]
   },
-  { name: 'ガイド', href: '/guides' },
-  { name: 'チュートリアル', href: '/tutorials' },
-  { name: '機能', href: '/features' },
-  { 
-    name: '会社情報',
-    submenu: [
-      { name: '私たちについて', href: '/about' },
-      { name: 'チーム', href: '/team' },
-      { name: 'お問い合わせ', href: '/contact' },
-      { name: 'ブログ', href: '/blog' },
-    ]
-  },
-  { 
-    name: 'その他',
-    submenu: [
-      { name: 'FAQ', href: '/faq' },
-      { name: '参考資料', href: '/sources' },
-      { name: '価格', href: '/pricing' },
-      { name: 'セキュリティ', href: '/security' },
-      { name: 'ロードマップ', href: '/roadmap' },
-      { name: '変更履歴', href: '/changelog' },
-      { name: 'プライバシー', href: '/privacy' },
-      { name: '利用規約', href: '/terms' },
-    ]
-  },
+  { name: 'Stories', href: '/blog' },
+  { name: 'Showcase', href: '/features' },
 ];
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-dark-950/90 backdrop-blur-xl border-b border-white/10">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-black/80 backdrop-blur-xl border-b border-white/10 py-2' : 'bg-transparent py-6'
+      }`}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <RocketIcon className="w-6 h-6 text-primary-500 group-hover:scale-110 transition-transform" />
-            <span className="text-xl font-bold text-gradient">GitHub Docs</span>
+            <span className="text-xl font-bold text-white tracking-tight">Code Voyage</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-8">
             {navigation.map((item) => (
               <div key={item.name} className="relative group">
                 {item.submenu ? (
                   <>
-                    <button className="text-dark-300 hover:text-white transition-colors py-2">
-                      {item.name} ▾
+                    <button className="text-gray-300 hover:text-white transition-colors flex items-center gap-1 text-sm font-medium uppercase tracking-wider">
+                      {item.name} 
+                      <span className="text-xs opacity-50 group-hover:rotate-180 transition-transform">▼</span>
                     </button>
-                    <div className="absolute top-full left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="bg-dark-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-2">
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pt-2">
+                      <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-2 overflow-hidden">
                         {item.submenu.map((subitem) => (
                           <Link
                             key={subitem.name}
                             href={subitem.href}
-                            className="block px-4 py-2 rounded-lg text-dark-300 hover:text-white hover:bg-white/5 transition-all"
+                            className="block px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all text-sm"
                           >
                             {subitem.name}
                           </Link>
@@ -86,7 +79,7 @@ export function Header() {
                 ) : (
                   <Link
                     href={item.href}
-                    className="text-dark-300 hover:text-white transition-colors relative group"
+                    className="text-gray-300 hover:text-white transition-colors text-sm font-medium uppercase tracking-wider relative group"
                   >
                     {item.name}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300" />
@@ -94,13 +87,19 @@ export function Header() {
                 )}
               </div>
             ))}
+            
+            <Link href="/contact">
+               <button className="px-6 py-2 rounded-full bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold transition-colors shadow-lg shadow-primary-900/20">
+                 Join Us
+               </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="メニュー"
+            className="lg:hidden p-2 rounded-lg text-white hover:bg-white/5 transition-colors"
+            aria-label="Menu"
           >
             <div className="w-6 h-5 flex flex-col justify-between">
               <motion.span
@@ -125,21 +124,21 @@ export function Header() {
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: '100vh' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-dark-900/95 backdrop-blur-xl border-t border-white/10 max-h-[80vh] overflow-y-auto"
+            className="lg:hidden fixed inset-0 top-[60px] bg-black/95 backdrop-blur-xl border-t border-white/10 overflow-y-auto z-40"
           >
-            <div className="px-4 py-6 space-y-2">
+            <div className="px-4 py-8 space-y-4">
               {navigation.map((item) => (
                 <div key={item.name}>
                   {item.submenu ? (
                     <>
                       <button
                         onClick={() => setOpenSubmenu(openSubmenu === item.name ? null : item.name)}
-                        className="w-full text-left px-4 py-3 rounded-lg text-dark-200 hover:text-white hover:bg-white/5 transition-all flex items-center justify-between"
+                        className="w-full text-left px-4 py-4 text-2xl font-light text-white border-b border-white/5 flex items-center justify-between"
                       >
                         {item.name}
-                        <span className={`transition-transform ${openSubmenu === item.name ? 'rotate-180' : ''}`}>▾</span>
+                        <span className={`transition-transform ${openSubmenu === item.name ? 'rotate-180' : ''} text-sm`}>▼</span>
                       </button>
                       <AnimatePresence>
                         {openSubmenu === item.name && (
@@ -147,14 +146,14 @@ export function Header() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="pl-4 space-y-1 overflow-hidden"
+                            className="bg-white/5 overflow-hidden"
                           >
                             {item.submenu.map((subitem) => (
                               <Link
                                 key={subitem.name}
                                 href={subitem.href}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block px-4 py-2 rounded-lg text-dark-300 hover:text-white hover:bg-white/5 transition-all"
+                                className="block px-8 py-4 text-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all"
                               >
                                 {subitem.name}
                               </Link>
@@ -167,7 +166,7 @@ export function Header() {
                     <Link
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-dark-200 hover:text-white hover:bg-white/5 transition-all"
+                      className="block px-4 py-4 text-2xl font-light text-white border-b border-white/5 hover:pl-6 transition-all"
                     >
                       {item.name}
                     </Link>
