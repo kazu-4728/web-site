@@ -1,80 +1,81 @@
-# 📘 Template Architecture & Developer Guide
+# 📘 テンプレート利用ガイド：Code Voyage
 
-This document describes the architecture of the Code Voyage template and guidelines for developers and AI agents.
+このドキュメントは、**Code Voyage** テンプレートを使用して、新しいマニュアルサイトやドキュメントサイトを作成するためのガイドです。
+非エンジニアの方や、AIエージェントと共に作業する方向けに書かれています。
 
-## 🏗️ Architecture Overview
+## 🌟 このテンプレートのコンセプト
 
-This project uses a **"JSON-Driven Content Engine"** architecture.
-This means that the site's content (text, images, structure) is completely decoupled from the React components (logic, UI).
+このテンプレートは**「JSON駆動 (JSON-Driven)」**という仕組みで作られています。
+簡単に言うと、**「文章とデザインが完全に分かれている」**ということです。
 
-### Directory Structure
+*   **文章（コンテンツ）**: `content.json` という1つのファイルにまとまっています。
+*   **デザイン（見た目）**: プログラムコードの中にあります（基本的には触る必要がありません）。
+
+つまり、**`content.json` を書き換えるだけで、あなたオリジナルのWebサイトが完成します。**
+
+## 📂 フォルダの構造（地図）
+
+重要な場所はごく一部です。
 
 ```
 /workspace
-├── .github/            # CI/CD workflows & templates
-├── app/                # Next.js App Router (Do not edit content here)
-├── themes/             # THEME DEFINITIONS (Edit content here)
+├── .github/            # 自動化の設定（触らなくてOK）
+├── app/                # サイトのプログラム（触らなくてOK）
+├── themes/             # ★ ここが作業場所です！
 │   └── github-docs/
-│       └── content.json  <-- MASTER DATA
-├── lib/                # Data loaders
-├── components/         # UI Components (Presentational)
-├── scripts/            # Maintenance scripts
-└── README.md           # Auto-generated
+│       └── content.json  <-- ★ これが「原稿」です
+├── scripts/            # 便利な道具箱
+└── README.md           # 自動で作られる表紙
 ```
 
-## 🤖 For AI Agents
+## 🤖 AIエージェントへの指示の出し方
 
-When you are asked to update content, add pages, or change text:
+もしあなたがChatGPTやCursorなどのAIに修正を依頼するときは、このように伝えてください。
 
-1.  **DO NOT edit `app/**/*.tsx` files for content changes.**
-    *   The `tsx` files are templates. Hardcoding text there breaks the theme system.
-2.  **ALWAYS edit `themes/github-docs/content.json`.**
-    *   This is the single source of truth.
-    *   Add new entries to `docs`, `blog`, or `features` arrays to create new pages automatically.
-3.  **Check Integrity.**
-    *   After editing JSON, run `npm run check` in the root directory to ensure all links and images are valid.
+> 「サイトの内容を変えたいときは、`app` フォルダのコードではなく、必ず `themes/github-docs/content.json` を編集してね。」
 
-## 🛠️ How to Extend
+これが最も重要なルールです。
 
-### Adding a New Documentation Page
+## ✍️ コンテンツの編集方法
 
-1.  Open `themes/github-docs/content.json`.
-2.  Find the `pages.docs` array.
-3.  Add a new object:
-    ```json
-    {
-      "slug": "my-new-topic",
-      "title": "My New Topic",
-      "subtitle": "Chapter X",
-      "description": "Short description...",
-      "image": "https://...",
-      "content": "## Markdown Content\n\nWrite your content here...",
-      "related": ["existing-slug"]
-    }
-    ```
-4.  The page will be automatically generated at `/docs/my-new-topic`.
+### 1. ドキュメント（記事）を追加する
 
-### Adding a Blog Post
+1.  `themes/github-docs/content.json` を開きます。
+2.  `"docs"` という項目（配列）を探します。
+3.  以下のようなデータを追加します。
 
-1.  Find `pages.blog.posts` in `content.json`.
-2.  Add a new post object following the schema.
+```json
+{
+  "slug": "my-new-topic",           // URLになります (例: /docs/my-new-topic)
+  "title": "はじめての記事",          // ページのタイトル
+  "subtitle": "Chapter 1",          // サブタイトル
+  "description": "この記事の短い説明", // 説明文
+  "image": "https://...",           // ヘッダー画像のURL
+  "content": "## 見出し\n\nここに本文を書きます...", // Markdown形式の本文
+  "related": ["getting-started"]    // 関連する記事のslug
+}
+```
 
-### Changing Design/Theme
+### 2. ブログ記事を追加する
 
-1.  **Colors**: Edit `app/globals.css` CSS variables (`--color-*`).
-2.  **Components**: Edit files in `app/components/`. Use Tailwind CSS.
+1.  `"blog"` の中の `"posts"` を探します。
+2.  ドキュメントと同じようにデータを追加します。
 
-## 🧪 Quality Control
+## 🧪 品質のチェック
 
-The repository includes strict validation scripts:
+リンク切れや画像のミスがないか、ロボットがチェックしてくれます。
+ターミナルで以下の魔法の言葉（コマンド）を唱えてください。
 
-*   `npm run check:links`: Validates all internal links, including dynamic routes generated from JSON.
-*   `npm run check:images`: Validates existence of local images and HTTP status of external images.
-*   `npm run lint`: ESLint check.
+```bash
+npm run check
+```
 
-**Always run `npm run check` before committing.**
+「✅ すべての...が有効です」と表示されれば完璧です！
 
-## 🚀 Deployment
+## 🚀 公開（デプロイ）について
 
-*   Push to `main` branch triggers the GitHub Pages deployment workflow.
-*   `README.md` is automatically regenerated based on `content.json` via GitHub Actions.
+このリポジトリの `main` ブランチに修正を保存（プッシュ）すると、自動的にWebサイトが更新されます。
+数分待てば、あなたの新しいサイトが世界に公開されます。
+
+---
+*Create with 💖 by Code Voyage Team*
