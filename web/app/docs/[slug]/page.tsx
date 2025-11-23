@@ -1,4 +1,4 @@
-import { getDocPage, getAllDocSlugs } from '../../lib/content';
+import { getDocPage, getAllDocSlugs, loadContent } from '../../lib/content';
 import { MarkdownRenderer } from '../../components/ui/MarkdownRenderer';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -20,6 +20,13 @@ interface Props {
 export default async function DocPage({ params }: Props) {
   const { slug } = await params;
   const page = await getDocPage(slug);
+  
+  // 全記事を取得して前後のナビゲーションを計算
+  const content = await loadContent();
+  const allDocs = content.pages.docs || [];
+  const currentIndex = allDocs.findIndex(p => p.slug === slug);
+  const nextDoc = currentIndex >= 0 && currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
+  const prevDoc = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
 
   if (!page) {
     notFound();
@@ -41,9 +48,9 @@ export default async function DocPage({ params }: Props) {
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <Link href="/" className="inline-flex items-center text-primary-400 mb-8 hover:text-primary-300 transition-colors">
+          <Link href="/docs" className="inline-flex items-center text-primary-400 mb-8 hover:text-primary-300 transition-colors">
             <ArrowLeftIcon className="w-4 h-4 mr-2" />
-            Back to Home
+            Back to Journey
           </Link>
           
           {page.subtitle && (
@@ -64,26 +71,36 @@ export default async function DocPage({ params }: Props) {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-dark-900/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-dark-800 shadow-2xl">
+        <div className="card-glass rounded-2xl p-8 md:p-12 bg-dark-900/50">
           <MarkdownRenderer content={page.content} />
         </div>
 
-        {/* Navigation */}
-        {page.related && page.related.length > 0 && (
-          <div className="mt-16 pt-16 border-t border-dark-800">
-            <h3 className="text-2xl font-bold text-white mb-8">Continue the Journey</h3>
-            <div className="flex flex-wrap gap-4">
-              {page.related.map((relatedSlug) => (
-                <Link key={relatedSlug} href={`/docs/${relatedSlug}`}>
-                  <Button variant="secondary" className="group">
-                    Next Chapter
-                    <ArrowRightIcon className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Navigation (Next/Prev) */}
+        <div className="mt-16 flex flex-col md:flex-row justify-between gap-8">
+          {prevDoc ? (
+             <Link href={`/docs/${prevDoc.slug}`} className="group flex-1">
+               <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Previous Chapter</div>
+               <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center gap-4">
+                 <ArrowLeftIcon className="w-5 h-5 text-primary-500 group-hover:-translate-x-1 transition-transform" />
+                 <div>
+                   <div className="text-white font-bold text-lg">{prevDoc.title}</div>
+                 </div>
+               </div>
+             </Link>
+          ) : <div className="flex-1" />}
+
+          {nextDoc ? (
+             <Link href={`/docs/${nextDoc.slug}`} className="group flex-1 text-right">
+               <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Next Chapter</div>
+               <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center justify-end gap-4">
+                 <div>
+                   <div className="text-white font-bold text-lg">{nextDoc.title}</div>
+                 </div>
+                 <ArrowRightIcon className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
+               </div>
+             </Link>
+          ) : <div className="flex-1" />}
+        </div>
       </div>
     </main>
   );

@@ -127,6 +127,15 @@
         "related": ["collaboration", "actions"]
       },
       {
+        "slug": "chapter-1",
+        "title": "始まりの場所：GitHub入門",
+        "subtitle": "Chapter 01 - The Awakening",
+        "description": "アカウント作成から初めてのコミットまで。あなたの開発者としての旅はここから始まります。",
+        "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
+        "content": "## 序章\n\nまだ見ぬ世界への扉を開くときが来ました。GitHubは単なるツールではありません。それは世界中の開発者が知恵を共有し、未来を紡ぐための巨大な図書館であり、工房であり、広場なのです。\n\n## アカウントの作成\n\nまずは自分自身のアイデンティティを確立しましょう。\n\n1. github.com にアクセスします。\n2. **Sign up** ボタンをクリックし、あなたのメールアドレスを入力します。\n3. ユニークなユーザー名を決めます。これはあなたの開発者としての「名前」になります。\n\n## 最初のプロジェクト\n\n「Hello, World」\n\nそれはプログラマーにとって特別な言葉です。さあ、リポジトリを作成し、世界に向けて挨拶をしましょう。\n\n```bash\ngit init my-first-project\ncd my-first-project\necho \"Hello, GitHub\" > README.md\ngit add README.md\ngit commit -m \"Initial commit\"\n```\n\nこれで、あなたの最初の足跡が刻まれました。",
+        "related": ["collaboration", "actions"]
+      },
+      {
         "slug": "collaboration",
         "title": "交差する運命：チーム開発",
         "subtitle": "Chapter 02 - The Conflict",
@@ -143,6 +152,24 @@
         "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=2088&auto=format&fit=crop",
         "content": "## 自動化という魔法\n\nテスト、ビルド、デプロイ。開発には繰り返しの作業がつきものです。GitHub Actions は、それらを自動化する「魔法の杖」です。\n\n## ワークフローの定義\n\n`.github/workflows/ci.yml` ファイルを作成するだけで、魔法は発動します。\n\n```yaml\nname: CI\non: [push]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v2\n    - name: Run a one-line script\n      run: echo Hello, world!\n```\n\n## 無限の可能性\n\n世界中の開発者が作成した数千のアクションを組み合わせて、あなただけの最強のワークフローを作り上げましょう。",
         "related": ["getting-started", "collaboration"]
+      },
+      {
+        "slug": "copilot",
+        "title": "未来の相棒：GitHub Copilot",
+        "subtitle": "Chapter 04 - The AI Companion",
+        "description": "AIと共にコードを書く。GitHub Copilotの使い方と、開発効率を劇的に向上させる方法。",
+        "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
+        "content": "## AIペアプログラマー\n\nGitHub Copilotは、あなたのコーディングを支援するAIパートナーです。コメントからコードを生成したり、テストを自動作成したりできます。",
+        "related": ["actions", "security"]
+      },
+      {
+        "slug": "security",
+        "title": "鉄壁の守り：GitHub Advanced Security",
+        "subtitle": "Chapter 05 - The Shield",
+        "description": "脆弱性を未然に防ぐ。Dependabot、Code Scanning、Secret Scanningによるセキュリティ対策。",
+        "image": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+        "content": "## セキュリティシフトレフト\n\n開発プロセスの早い段階でセキュリティリスクを検出し、修正することが重要です。GitHubは、そのための強力なツールを提供しています。",
+        "related": ["copilot", "actions"]
       }
     ]
   }

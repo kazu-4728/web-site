@@ -1,21 +1,52 @@
 #!/usr/bin/env node
 /**
- * 画像チェックスクリプト
- * - 画像ファイルの存在確認
- * - 外部画像URLの有効性確認
+ * 厳格な画像チェッカー
+ * - ローカル画像の存在確認
+ * - 外部画像のHTTPステータス確認 (HEADリクエスト)
  */
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const http = require('http');
+
+const appDir = path.join(__dirname, '../app');
+const themesDir = path.join(__dirname, '../themes');
+const publicDir = path.join(__dirname, '../public');
 
 const errors = [];
 const warnings = [];
 
-// コンポーネントとページファイルを検索
+// URLの有効性チェック
+function checkUrl(url) {
+  return new Promise((resolve) => {
+    // Unsplash等の最適化URLパラメータを除去してベースURLでチェック（オプション）
+    // 今回はそのままチェックする
+    
+    const client = url.startsWith('https') ? https : http;
+    const req = client.request(url, { method: 'HEAD', timeout: 5000 }, (res) => {
+      if (res.statusCode >= 200 && res.statusCode < 400) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+    
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.end();
+  });
+}
+
+// ファイル探索
 function findFiles(dir, ext) {
   const files = [];
-  const items = fs.readdirSync(dir, { withFileTypes: true });
+  if (!fs.existsSync(dir)) return files;
   
+  const items = fs.readdirSync(dir, { withFileTypes: true });
   for (const item of items) {
     const fullPath = path.join(dir, item.name);
     if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
@@ -24,102 +55,92 @@ function findFiles(dir, ext) {
       files.push(fullPath);
     }
   }
-  
   return files;
 }
 
-// 画像参照を抽出
-function extractImageReferences(content) {
-  const images = [];
+// 画像パス抽出
+function extractImages(content) {
+  const images = new Set();
+  // src="..." / src={...} / url(...)
+  const patterns = [
+    /src=["']([^"']+)["']/g,
+    /src=\{["']([^"']+)["']\}/g,
+    /url\(["']?([^"'\)]+)["']?\)/g,
+    /"image":\s*"([^"]+)"/g, // JSON content
+    /"bgImage":\s*"([^"]+)"/g // JSON content
+  ];
+
+  patterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      const img = match[1];
+      if (img && !img.startsWith('data:')) {
+        images.add(img);
+      }
+    }
+  });
   
-  // src="..." または src={...}
-  const srcMatches = content.matchAll(/src=["'{]([^"'}]+)["'}]/g);
-  for (const match of srcMatches) {
-    images.push(match[1]);
-  }
-  
-  // backgroundImage: url(...)
-  const bgMatches = content.matchAll(/backgroundImage:\s*["'`]url\(([^)]+)\)["'`]/g);
-  for (const match of bgMatches) {
-    images.push(match[1]);
-  }
-  
-  // style={{ backgroundImage: `url(...)`}}
-  const styleBgMatches = content.matchAll(/backgroundImage:\s*`url\(([^)]+)\)`/g);
-  for (const match of styleBgMatches) {
-    images.push(match[1]);
-  }
-  
-  return images;
+  return Array.from(images);
 }
 
-// メイン処理
-function main() {
-  console.log('🔍 画像チェック開始...\n');
-  
-  const appDir = path.join(__dirname, '../app');
-  const publicDir = path.join(__dirname, '../public');
-  
+async function main() {
+  console.log('🔍 厳格な画像チェックを開始...\n');
+
+  // 1. ソースコードからの抽出
   const tsxFiles = findFiles(appDir, '.tsx');
-  
-  for (const file of tsxFiles) {
+  const jsonFiles = findFiles(themesDir, '.json');
+  const allFiles = [...tsxFiles, ...jsonFiles];
+
+  const imageMap = new Map(); // url -> [files]
+
+  for (const file of allFiles) {
     const content = fs.readFileSync(file, 'utf-8');
-    const images = extractImageReferences(content);
-    
+    const images = extractImages(content);
+    const relPath = path.relative(process.cwd(), file);
+
     for (const img of images) {
-      // 外部URL
-      if (img.startsWith('http://') || img.startsWith('https://')) {
-        warnings.push({
-          file: path.relative(process.cwd(), file),
-          image: img,
-          message: '外部画像URL（ビルド時に確認不可）',
-        });
+      if (!imageMap.has(img)) {
+        imageMap.set(img, []);
       }
-      // ローカル画像
-      else if (img.startsWith('/')) {
-        const imagePath = path.join(publicDir, img);
-        if (!fs.existsSync(imagePath)) {
-          errors.push({
-            file: path.relative(process.cwd(), file),
-            image: img,
-            message: '画像ファイルが存在しません',
-          });
-        }
+      imageMap.get(img).push(relPath);
+    }
+  }
+
+  // 2. 検証
+  const total = imageMap.size;
+  let current = 0;
+  
+  for (const [img, files] of imageMap) {
+    current++;
+    // 進捗表示（簡易）
+    if (current % 10 === 0) process.stdout.write(`\rChecking ${current}/${total}...`);
+
+    if (img.startsWith('http://') || img.startsWith('https://')) {
+      // 外部URLチェック
+      const isValid = await checkUrl(img);
+      if (!isValid) {
+        errors.push({ image: img, files, type: 'BROKEN_EXTERNAL_LINK' });
+      }
+    } else if (img.startsWith('/')) {
+      // ローカルファイルチェック
+      const localPath = path.join(publicDir, img);
+      if (!fs.existsSync(localPath)) {
+        errors.push({ image: img, files, type: 'FILE_NOT_FOUND' });
       }
     }
   }
-  
-  // 結果表示
+  process.stdout.write('\n\n');
+
   if (errors.length > 0) {
-    console.log('❌ エラー:\n');
-    errors.forEach(err => {
-      console.log(`  ${err.file}`);
-      console.log(`    画像: ${err.image}`);
-      console.log(`    ${err.message}\n`);
+    console.error('❌ 画像エラーが見つかりました:\n');
+    errors.forEach(e => {
+      console.error(`  🖼️ ${e.image} (${e.type})`);
+      console.error(`     参照元: ${e.files.join(', ')}`);
     });
-  }
-  
-  if (warnings.length > 0) {
-    console.log('⚠️  警告:\n');
-    warnings.forEach(warn => {
-      console.log(`  ${warn.file}`);
-      console.log(`    画像: ${warn.image}`);
-      console.log(`    ${warn.message}\n`);
-    });
-  }
-  
-  if (errors.length === 0 && warnings.length === 0) {
-    console.log('✅ 画像チェック完了: 問題なし\n');
-    process.exit(0);
-  }
-  
-  if (errors.length > 0) {
-    console.log(`\n❌ ${errors.length}個のエラーが見つかりました`);
     process.exit(1);
   }
-  
-  console.log(`\n⚠️  ${warnings.length}個の警告があります`);
-  process.exit(0);
+
+  console.log('✅ すべての画像が有効です');
 }
 
 main();
