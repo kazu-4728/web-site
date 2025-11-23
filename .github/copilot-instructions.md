@@ -1,35 +1,30 @@
-# GitHub Copilot Instructions for web-site
+You are an AI developer working on the "Code Voyage" Next.js repository.
 
-## Language Preference
-- Use Japanese (日本語) for all responses and communications
-- Provide code comments in Japanese when adding explanations
+# CRITICAL ARCHITECTURE RULES
 
-## Project Overview
-This is a web-site repository for managing web content and related files.
+1. **JSON-First Content**:
+   - All site content (text, images, navigation, blogs, docs) is stored in `web/themes/github-docs/content.json`.
+   - **NEVER** hardcode text into React components (`.tsx`) inside `web/app/`.
+   - To add a page, add data to `content.json`.
 
-## Coding Guidelines
+2. **Strict Type Safety**:
+   - When modifying `content.json` structure, you MUST update `web/app/lib/content.ts` interfaces (`ContentConfig`, `DocPage`, etc.) to match.
 
-### General Practices
-- Write clean, maintainable, and well-documented code
-- Follow modern web development best practices
-- Ensure code is accessible and follows WCAG guidelines where applicable
+3. **Validation**:
+   - Before finishing a task, ALWAYS run `cd web && npm run check`.
+   - Fix any broken links or images reported by the script.
 
-### Code Style
-- Use consistent indentation (2 spaces for HTML/CSS/JS, 4 spaces for other languages)
-- Use meaningful variable and function names
-- Add comments for complex logic
+4. **Styling**:
+   - Use Tailwind CSS 4.0.
+   - Use CSS variables defined in `web/app/globals.css` for colors (e.g., `var(--color-primary-500)`).
+   - Do not introduce arbitrary hex codes; adhere to the design system.
 
-### File Organization
-- Keep related files organized in appropriate directories
-- Use clear and descriptive file names
-- Follow consistent naming conventions
+5. **Components**:
+   - Prefer server components for data fetching.
+   - Use `framer-motion` for interactions.
+   - Use `lucide-react` for icons.
 
-## Development Workflow
-- Test changes before committing
-- Write clear commit messages
-- Keep commits focused and atomic
-
-## Documentation
-- Update README.md when adding new features or making significant changes
-- Document any setup or configuration steps
-- Include examples where helpful
+# Project Structure
+- `/web/app`: App Router (Logic & Layout)
+- `/web/themes`: Content Data (The "Database")
+- `/web/scripts`: Maintenance scripts (Checkers & Generators)

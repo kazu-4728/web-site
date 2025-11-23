@@ -1,297 +1,80 @@
-# 📚 GitHub Docs テンプレート使用ガイド
+# 📘 Template Architecture & Developer Guide
 
-このテンプレートは、美しいドキュメントサイトを簡単に作成できるように設計されています。
+This document describes the architecture of the Code Voyage template and guidelines for developers and AI agents.
 
-## 🎨 テンプレート特徴
+## 🏗️ Architecture Overview
 
-### デザインシステム
-- **Tailwind CSS 4.0** - CSS変数ベースのテーマシステム
-- **Framer Motion** - スムーズなアニメーション
-- **レスポンシブデザイン** - モバイル/タブレット/デスクトップ対応
-- **ダークテーマ** - 目に優しい配色
+This project uses a **"JSON-Driven Content Engine"** architecture.
+This means that the site's content (text, images, structure) is completely decoupled from the React components (logic, UI).
 
-### コンポーネントライブラリ
-
-#### UI Components (`/web/app/components/ui/`)
-- `Button.tsx` - バリアント対応ボタン
-- `Container.tsx` - レイアウトコンテナ
-- `GlassCard.tsx` - グラスモーフィズムカード
-- `PageHeader.tsx` - ページヘッダー
-- `Grid.tsx` - レスポンシブグリッド
-- `Badge.tsx` - バッジ
-
-#### Layout Components (`/web/app/components/layouts/`)
-- `HeroSection.tsx` - ヒーローセクション
-- `ContentSection.tsx` - コンテンツセクション
-
-#### Card Components (`/web/app/components/cards/`)
-- `FeatureCard.tsx` - 機能カード
-- `ContentCard.tsx` - コンテンツカード
-- `StatCard.tsx` - 統計カード
-- `TestimonialCard.tsx` - お客様の声カード
-
-#### Stripe Components (`/web/app/components/stripe/`)
-- `AnimatedBackground.tsx` - パーティクルアニメーション背景
-- `InteractiveCard.tsx` - 3D視差効果カード
-- `StatCounter.tsx` - アニメーションカウンター
-
-#### Navigation
-- `Header.tsx` - ハンバーガーメニュー付きヘッダー
-
-## 🚀 クイックスタート
-
-### 1. 新しいページの作成
-
-```bash
-# ページ生成スクリプトを使用
-cd web
-npm run generate:page docs your-topic "トピック名"
-```
-
-または手動で作成：
-
-```typescript
-// web/app/your-page/page.tsx
-import { PageHeader } from '../components/ui/PageHeader';
-import { ContentSection } from '../components/layouts/ContentSection';
-
-export default function YourPage() {
-  return (
-    <>
-      <PageHeader
-        title="ページタイトル"
-        description="ページ説明"
-        backgroundImage="https://images.unsplash.com/..."
-      />
-      <ContentSection>
-        {/* コンテンツ */}
-      </ContentSection>
-    </>
-  );
-}
-```
-
-### 2. ナビゲーションへの追加
-
-```typescript
-// web/app/components/navigation/Header.tsx
-const navigation = [
-  { name: '新しいページ', href: '/your-page' },
-  // または submenu に追加
-];
-```
-
-### 3. 画像の使用
-
-```typescript
-// web/app/lib/images.ts で管理
-export const IMAGES = {
-  your_category: {
-    key: 'https://images.unsplash.com/...',
-  },
-};
-
-// コンポーネントで使用
-import { getImage } from '../lib/images';
-const imageUrl = getImage('your_category', 'key');
-```
-
-## 🎨 テーマのカスタマイズ
-
-### CSS変数の変更
-
-```css
-/* web/app/globals.css */
-@theme {
-  --color-primary-500: #your-color;
-  --font-heading: 'Your Font', sans-serif;
-}
-```
-
-### カラーパレット
-
-```typescript
-// 現在のパレット
-primary: #ff8a3d (オレンジ)
-dark: #020617 〜 #f8fafc (グレースケール)
-
-// カスタマイズ例
---color-primary-500: #3b82f6; // Blue
---color-primary-500: #8b5cf6; // Purple
---color-primary-500: #10b981; // Green
-```
-
-## 📁 プロジェクト構造
+### Directory Structure
 
 ```
-web/
-├── app/
-│   ├── components/
-│   │   ├── ui/              # UI基本コンポーネント
-│   │   ├── layouts/         # レイアウトコンポーネント
-│   │   ├── cards/           # カードコンポーネント
-│   │   ├── stripe/          # Stripe風コンポーネント
-│   │   ├── navigation/      # ナビゲーション
-│   │   └── icons/           # SVGアイコン
-│   ├── lib/
-│   │   ├── utils.ts         # ユーティリティ関数
-│   │   ├── images.ts        # 画像管理
-│   │   └── design-tokens.ts # デザイントークン
-│   ├── data/                # コンテンツデータ
-│   └── [page]/page.tsx      # 各ページ
-├── scripts/
-│   ├── check-images.js      # 画像チェック
-│   ├── check-links.js       # リンクチェック
-│   ├── generate-page.js     # ページ生成
-│   └── generate-readme.js   # README生成
-├── tests/                   # テスト
-└── public/                  # 静的ファイル
+/workspace
+├── .github/            # CI/CD workflows & templates
+├── web/
+│   ├── app/            # Next.js App Router (Do not edit content here)
+│   ├── themes/         # THEME DEFINITIONS (Edit content here)
+│   │   └── github-docs/
+│   │       └── content.json  <-- MASTER DATA
+│   ├── lib/            # Data loaders
+│   └── components/     # UI Components (Presentational)
+└── README.md           # Auto-generated
 ```
 
-## 🧪 品質チェック
+## 🤖 For AI Agents
 
-### すべてのチェック実行
+When you are asked to update content, add pages, or change text:
 
-```bash
-npm run check
-```
+1.  **DO NOT edit `web/app/**/*.tsx` files for content changes.**
+    *   The `tsx` files are templates. Hardcoding text there breaks the theme system.
+2.  **ALWAYS edit `web/themes/github-docs/content.json`.**
+    *   This is the single source of truth.
+    *   Add new entries to `docs`, `blog`, or `features` arrays to create new pages automatically.
+3.  **Check Integrity.**
+    *   After editing JSON, run `npm run check` in the `web` directory to ensure all links and images are valid.
 
-### 個別チェック
+## 🛠️ How to Extend
 
-```bash
-npm run check:images  # 画像の存在確認
-npm run check:links   # リンク切れチェック
-npm test             # テスト実行
-```
+### Adding a New Documentation Page
 
-## 🔧 利用可能なスクリプト
+1.  Open `web/themes/github-docs/content.json`.
+2.  Find the `pages.docs` array.
+3.  Add a new object:
+    ```json
+    {
+      "slug": "my-new-topic",
+      "title": "My New Topic",
+      "subtitle": "Chapter X",
+      "description": "Short description...",
+      "image": "https://...",
+      "content": "## Markdown Content\n\nWrite your content here...",
+      "related": ["existing-slug"]
+    }
+    ```
+4.  The page will be automatically generated at `/docs/my-new-topic`.
 
-```json
-{
-  "dev": "開発サーバー起動",
-  "build": "本番ビルド",
-  "test": "テスト実行",
-  "test:watch": "テストウォッチモード",
-  "check": "すべてのチェック",
-  "check:images": "画像チェック",
-  "check:links": "リンクチェック",
-  "generate:page": "ページ生成"
-}
-```
+### Adding a Blog Post
 
-## 📦 必須依存関係
+1.  Find `pages.blog.posts` in `content.json`.
+2.  Add a new post object following the schema.
 
-### フロントエンド
-- `next@15.5.6` - Reactフレームワーク
-- `react@18.3.1` - UIライブラリ
-- `typescript@5.7.2` - 型安全性
-- `framer-motion@12.0.0-alpha.1` - アニメーション
-- `tailwindcss@4.1.0-alpha.42` - CSSフレームワーク
+### Changing Design/Theme
 
-### UI/UX
-- `@radix-ui/react-*` - アクセシブルなUI要素
-- `class-variance-authority` - バリアント管理
-- `clsx` - クラス名結合
+1.  **Colors**: Edit `web/app/globals.css` CSS variables (`--color-*`).
+2.  **Components**: Edit files in `web/app/components/`. Use Tailwind CSS.
 
-### ツール
-- `vitest@4.0.9` - テストランナー
-- `@testing-library/react` - Reactテスト
-- `postcss` - CSS処理
+## 🧪 Quality Control
 
-## 🎯 ベストプラクティス
+The repository includes strict validation scripts:
 
-### 1. コンポーネント設計
-- 単一責任の原則
-- 再利用可能な小さなコンポーネント
-- TypeScriptで型定義
+*   `npm run check:links`: Validates all internal links, including dynamic routes generated from JSON.
+*   `npm run check:images`: Validates existence of local images and HTTP status of external images.
+*   `npm run lint`: ESLint check.
 
-### 2. パフォーマンス
-- 画像は`next/image`を使用
-- `priority`属性でLCP改善
-- 適切なコード分割
+**Always run `npm run check` before committing.**
 
-### 3. アクセシビリティ
-- 適切なARIA属性
-- キーボードナビゲーション
-- コントラスト比の確保
+## 🚀 Deployment
 
-### 4. SEO
-- 適切なメタデータ
-- セマンティックHTML
-- 構造化データ（必要に応じて）
-
-## 🚀 デプロイ
-
-### GitHub Pages (自動)
-1. `main`ブランチにプッシュ
-2. GitHub Actionsが自動実行
-3. デプロイ完了を確認
-
-### カスタムドメイン
-1. `web/public/CNAME` を作成
-2. ドメインを記載
-3. DNS設定を更新
-
-## 🤝 貢献ガイド
-
-### ブランチ戦略
-```bash
-main          # 本番環境
-feature/*     # 新機能
-fix/*         # バグ修正
-docs/*        # ドキュメント
-```
-
-### コミットメッセージ
-```
-feat: 新機能追加
-fix: バグ修正
-docs: ドキュメント更新
-style: コードスタイル変更
-refactor: リファクタリング
-test: テスト追加・修正
-chore: ビルドプロセスなど
-```
-
-## 📚 参考資料
-
-### 公式ドキュメント
-- [Next.js](https://nextjs.org/docs)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Vitest](https://vitest.dev/)
-
-### デザインインスピレーション
-- [webdesignclip.com](https://webdesignclip.com/)
-- [Stripe.com](https://stripe.com/)
-- [Vercel.com](https://vercel.com/)
-
-## 🆘 トラブルシューティング
-
-### ビルドエラー
-```bash
-# キャッシュクリア
-rm -rf .next node_modules
-npm install
-npm run build
-```
-
-### テストエラー
-```bash
-# 詳細表示
-npm test -- --reporter=verbose
-```
-
-### 画像が表示されない
-- Unsplash URLが有効か確認
-- `next.config.mjs`の`remotePatterns`を確認
-
-## 📞 サポート
-
-- GitHub Issues: バグ報告・機能要望
-- GitHub Discussions: 質問・議論
-- Pull Requests: コード貢献
-
----
-
-**Happy Coding! 🎉**
+*   Push to `main` branch triggers the GitHub Pages deployment workflow.
+*   `README.md` is automatically regenerated based on `content.json` via GitHub Actions.
