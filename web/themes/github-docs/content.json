@@ -1,0 +1,149 @@
+{
+  "site": {
+    "name": "Code Voyage",
+    "tagline": "Mastering GitHub: A Developer's Journey",
+    "description": "単なるツールではない。開発者の人生を変える「物語」としてのGitHub完全ガイド。",
+    "logo": {
+      "text": "CodeVoyage",
+      "icon": "github"
+    }
+  },
+  "navigation": [
+    { "label": "Home", "href": "/" },
+    { "label": "The Journey", "href": "/docs" },
+    { "label": "Stories", "href": "/blog" },
+    { "label": "Showcase", "href": "/features" },
+    { "label": "Join Us", "href": "/contact", "variant": "primary" }
+  ],
+  "pages": {
+    "home": {
+      "hero": {
+        "type": "cinematic",
+        "title": "コードが世界を\n繋ぐとき",
+        "subtitle": "The Moment Code Connects the World",
+        "description": "一人の開発者が、世界中の何百万という才能と繋がる場所。GitHubは単なるバージョン管理ツールではありません。それは、あなたのアイデアを永遠に残すための「箱舟」です。",
+        "bgImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+        "overlay": "dark",
+        "actions": [
+          { "label": "物語を始める", "href": "/docs/chapter-1", "variant": "primary" },
+          { "label": "機能を探求する", "href": "/features", "variant": "secondary" }
+        ]
+      },
+      "sections": [
+        {
+          "id": "chapter-1",
+          "type": "split-feature",
+          "layout": "image-right",
+          "chapter": "Chapter 01",
+          "title": "始まりの場所",
+          "subtitle": "The Awakening",
+          "description": "すべての偉大なプロジェクトは、たった一つの「git init」から始まります。あなたのローカル環境という小さな庭から、無限に広がるオープンソースの大海原へ。最初のコミットは、未来への宣言です。",
+          "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
+          "stats": [
+            { "value": "100M+", "label": "Repositories" },
+            { "value": "40M+", "label": "Developers" }
+          ],
+          "link": { "text": "リポジトリ作成の物語を読む", "href": "/docs/getting-started" }
+        },
+        {
+          "id": "chapter-2",
+          "type": "split-feature",
+          "layout": "image-left",
+          "chapter": "Chapter 02",
+          "title": "交差する運命",
+          "subtitle": "The Conflict & Resolution",
+          "description": "チーム開発は順風満帆ではありません。「コンフリクト」は避けて通れない試練。しかし、それを乗り越え、互いのコードをマージした瞬間、1+1は無限大になります。Pull Requestは、コードに対するラブレターなのです。",
+          "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop",
+          "quote": {
+            "text": "コンフリクトを恐れるな。それはチームが成長している証なのだから。",
+            "author": "Senior Engineer"
+          },
+          "link": { "text": "協調開発の極意を知る", "href": "/docs/collaboration" }
+        },
+        {
+          "id": "showcase",
+          "type": "grid-gallery",
+          "title": "進化する開発体験",
+          "subtitle": "Automation & Beyond",
+          "description": "GitHub Actionsによる自動化、CopilotによるAI支援。テクノロジーはあなたの開発体験を次なる次元へと押し上げます。",
+          "items": [
+            {
+              "title": "GitHub Actions",
+              "description": "CI/CDパイプラインを数行のYAMLで。",
+              "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=2088&auto=format&fit=crop",
+              "href": "/docs/actions"
+            },
+            {
+              "title": "GitHub Copilot",
+              "description": "AIペアプログラマーと共に。",
+              "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&auto=format&fit=crop",
+              "href": "/docs/copilot"
+            },
+            {
+              "title": "Security",
+              "description": "堅牢なセキュリティを標準装備。",
+              "image": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&auto=format&fit=crop",
+              "href": "/docs/security"
+            }
+          ]
+        },
+        {
+          "id": "testimonials",
+          "type": "testimonials",
+          "title": "開発者たちの声",
+          "items": [
+            {
+              "content": "GitHubなくして、現代のソフトウェア開発は語れない。それは空気のような存在だ。",
+              "author": "Sarah Jenkins",
+              "role": "Tech Lead at Vercel",
+              "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+            },
+            {
+              "content": "オープンソースへの貢献が、私のキャリアを劇的に変えました。",
+              "author": "Kenji Tanaka",
+              "role": "OSS Contributor",
+              "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
+            }
+          ]
+        },
+        {
+          "id": "cta",
+          "type": "cta-fullscreen",
+          "title": "さあ、旅に出よう",
+          "description": "あなたのコードが世界を変える瞬間を、私たちは待っています。",
+          "bgImage": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop",
+          "action": { "label": "Start Your Journey", "href": "/docs/getting-started" }
+        }
+      ]
+    },
+    "docs": [
+      {
+        "slug": "getting-started",
+        "title": "始まりの場所：GitHub入門",
+        "subtitle": "Chapter 01 - The Awakening",
+        "description": "アカウント作成から初めてのコミットまで。あなたの開発者としての旅はここから始まります。",
+        "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop",
+        "content": "## 序章\n\nまだ見ぬ世界への扉を開くときが来ました。GitHubは単なるツールではありません。それは世界中の開発者が知恵を共有し、未来を紡ぐための巨大な図書館であり、工房であり、広場なのです。\n\n## アカウントの作成\n\nまずは自分自身のアイデンティティを確立しましょう。\n\n1. github.com にアクセスします。\n2. **Sign up** ボタンをクリックし、あなたのメールアドレスを入力します。\n3. ユニークなユーザー名を決めます。これはあなたの開発者としての「名前」になります。\n\n## 最初のプロジェクト\n\n「Hello, World」\n\nそれはプログラマーにとって特別な言葉です。さあ、リポジトリを作成し、世界に向けて挨拶をしましょう。\n\n```bash\ngit init my-first-project\ncd my-first-project\necho \"Hello, GitHub\" > README.md\ngit add README.md\ngit commit -m \"Initial commit\"\n```\n\nこれで、あなたの最初の足跡が刻まれました。",
+        "related": ["collaboration", "actions"]
+      },
+      {
+        "slug": "collaboration",
+        "title": "交差する運命：チーム開発",
+        "subtitle": "Chapter 02 - The Conflict",
+        "description": "一人では到達できない高みへ。Pull Requestとコードレビューを通じて、チームで開発する喜びと難しさを学びます。",
+        "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop",
+        "content": "## 孤独な旅の終わり\n\n個人のプロジェクトからチーム開発へ。それはソロ演奏からオーケストラへの転換です。\n\n## Pull Request\n\nあなたの書いたコードを、メインのコードベースに統合するための提案。それが Pull Request (PR) です。\n\n1. ブランチを作成し、変更を加えます。\n2. GitHub上で PR を作成します。\n3. チームメンバーにレビューを依頼します。\n\n## コンフリクトの解消\n\n「コンフリクト（競合）」\n\n同じファイルの同じ行を、二人が同時に編集してしまったとき。それは避けて通れない試練です。\n\nしかし恐れることはありません。コンフリクトは、活発に開発が行われている証拠なのです。エディタを開き、両者の変更を確認し、最適な形に統合しましょう。\n\n> コンフリクトを解決することは、技術的な作業であると同時に、コミュニケーションのプロセスでもあります。",
+        "related": ["getting-started", "actions"]
+      },
+      {
+        "slug": "actions",
+        "title": "魔法の杖：GitHub Actions",
+        "subtitle": "Chapter 03 - The Automation",
+        "description": "退屈な作業はロボットに任せて、創造的な仕事に集中しましょう。CI/CDパイプラインの構築。",
+        "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=2088&auto=format&fit=crop",
+        "content": "## 自動化という魔法\n\nテスト、ビルド、デプロイ。開発には繰り返しの作業がつきものです。GitHub Actions は、それらを自動化する「魔法の杖」です。\n\n## ワークフローの定義\n\n`.github/workflows/ci.yml` ファイルを作成するだけで、魔法は発動します。\n\n```yaml\nname: CI\non: [push]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v2\n    - name: Run a one-line script\n      run: echo Hello, world!\n```\n\n## 無限の可能性\n\n世界中の開発者が作成した数千のアクションを組み合わせて、あなただけの最強のワークフローを作り上げましょう。",
+        "related": ["getting-started", "collaboration"]
+      }
+    ]
+  }
+}
