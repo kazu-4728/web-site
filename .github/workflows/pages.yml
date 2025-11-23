@@ -42,9 +42,6 @@ jobs:
       - name: Build Next.js static export
         run: npm run build
 
-      - name: Add .nojekyll to build output
-        run: touch out/.nojekyll
-
       - name: Debug output directory
         run: ls -la out
 

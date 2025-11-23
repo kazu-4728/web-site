@@ -153,7 +153,7 @@ export interface BlogPost {
 let cachedContent: ContentConfig | null = null;
 
 /**
- * Load theme content from JSON
+ * Load theme content from JSON using static import to ensure bundling
  */
 export async function loadContent(): Promise<ContentConfig> {
   if (cachedContent) return cachedContent;
@@ -161,10 +161,21 @@ export async function loadContent(): Promise<ContentConfig> {
   const themeName = process.env.NEXT_PUBLIC_THEME || 'github-docs';
   
   try {
-    const filePath = path.join(process.cwd(), 'themes', themeName, 'content.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    cachedContent = JSON.parse(fileContents);
-    return cachedContent!;
+    // Static import for default theme to ensure it is bundled by Webpack/Next.js
+    // For other themes, we could use dynamic import, but for now we default to github-docs
+    let contentModule;
+    
+    if (themeName === 'stripe') {
+        // Dynamic import for other themes if they exist
+        // contentModule = await import(`../../themes/stripe/content.json`);
+        // Fallback for now as stripe theme json might not exist fully populated
+        contentModule = await import('../../themes/github-docs/content.json');
+    } else {
+        contentModule = await import('../../themes/github-docs/content.json');
+    }
+
+    cachedContent = contentModule.default as ContentConfig;
+    return cachedContent;
   } catch (error) {
     console.error(`Failed to load theme content for ${themeName}:`, error);
     return fallbackContent;
