@@ -1,5 +1,6 @@
 import { getDocPage, getAllDocSlugs, loadContent } from '../../lib/content';
 import { MarkdownRenderer } from '../../components/ui/MarkdownRenderer';
+import { TableOfContents } from '../../components/ui/TableOfContents';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../../components/ui/Button';
@@ -69,37 +70,67 @@ export default async function DocPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="card-glass rounded-2xl p-8 md:p-12 bg-dark-900/50">
-          <MarkdownRenderer content={page.content} />
-        </div>
+      {/* Content Wrapper with Sidebar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-12">
+          
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            
+            {/* Mobile Table of Contents */}
+            <div className="lg:hidden mb-8">
+              <details className="card-glass rounded-xl overflow-hidden group">
+                <summary className="flex items-center justify-between p-4 font-bold text-white cursor-pointer bg-white/5 hover:bg-white/10 transition-colors list-none">
+                  <span>Table of Contents</span>
+                  <span className="transform group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="p-4 border-t border-white/10">
+                  <TableOfContents content={page.content} />
+                </div>
+              </details>
+            </div>
 
-        {/* Navigation (Next/Prev) */}
-        <div className="mt-16 flex flex-col md:flex-row justify-between gap-8">
-          {prevDoc ? (
-             <Link href={`/docs/${prevDoc.slug}`} className="group flex-1">
-               <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Previous Chapter</div>
-               <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center gap-4">
-                 <ArrowLeftIcon className="w-5 h-5 text-primary-500 group-hover:-translate-x-1 transition-transform" />
-                 <div>
-                   <div className="text-white font-bold text-lg">{prevDoc.title}</div>
-                 </div>
-               </div>
-             </Link>
-          ) : <div className="flex-1" />}
+            <div className="card-glass rounded-2xl p-8 md:p-12 bg-dark-900/50">
+              <MarkdownRenderer content={page.content} />
+            </div>
 
-          {nextDoc ? (
-             <Link href={`/docs/${nextDoc.slug}`} className="group flex-1 text-right">
-               <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Next Chapter</div>
-               <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center justify-end gap-4">
-                 <div>
-                   <div className="text-white font-bold text-lg">{nextDoc.title}</div>
-                 </div>
-                 <ArrowRightIcon className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
+            {/* Navigation (Next/Prev) */}
+            <div className="mt-16 flex flex-col md:flex-row justify-between gap-8">
+              {prevDoc ? (
+                 <Link href={`/docs/${prevDoc.slug}`} className="group flex-1">
+                   <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Previous Chapter</div>
+                   <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center gap-4">
+                     <ArrowLeftIcon className="w-5 h-5 text-primary-500 group-hover:-translate-x-1 transition-transform" />
+                     <div>
+                       <div className="text-white font-bold text-lg">{prevDoc.title}</div>
+                     </div>
+                   </div>
+                 </Link>
+              ) : <div className="flex-1" />}
+
+              {nextDoc ? (
+                 <Link href={`/docs/${nextDoc.slug}`} className="group flex-1 text-right">
+                   <div className="text-sm text-gray-500 mb-2 uppercase tracking-widest">Next Chapter</div>
+                   <div className="card-glass p-6 rounded-xl group-hover:bg-white/5 transition-colors flex items-center justify-end gap-4">
+                     <div>
+                       <div className="text-white font-bold text-lg">{nextDoc.title}</div>
+                     </div>
+                     <ArrowRightIcon className="w-5 h-5 text-primary-500 group-hover:translate-x-1 transition-transform" />
+                   </div>
+                 </Link>
+              ) : <div className="flex-1" />}
+            </div>
+          </div>
+
+          {/* Desktop Sidebar Table of Contents */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+             <div className="sticky top-24">
+               <div className="card-glass rounded-xl p-6 bg-dark-900/50">
+                 <TableOfContents content={page.content} />
                </div>
-             </Link>
-          ) : <div className="flex-1" />}
+             </div>
+          </aside>
+
         </div>
       </div>
     </main>

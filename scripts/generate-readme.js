@@ -2,7 +2,7 @@
 /**
  * README自動生成スクリプト
  * サイト設定とコンテンツデータからREADMEを生成
- * バージョン: 2.0 (JSON駆動対応)
+ * バージョン: 2.1 (Sitemap & Sitemap Tree対応)
  */
 
 const fs = require('fs');
@@ -18,8 +18,7 @@ function loadConfig() {
       packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
     }
     
-    // JSONテーマファイルを読み込み (デフォルト: github-docs)
-    // 注意: 環境変数がスクリプト実行時に設定されていない場合はデフォルトを使用
+    // JSONテーマファイルを読み込み
     const themeName = process.env.NEXT_PUBLIC_THEME || 'github-docs';
     const contentPath = path.join(__dirname, `../themes/${themeName}/content.json`);
     
@@ -31,19 +30,42 @@ function loadConfig() {
     }
 
     // 統計情報の抽出
-    const pages = content.pages || {};
     const docs = content.pages?.docs || [];
+    const blogPosts = content.pages?.blog?.posts || [];
     const topics = docs.length;
+    const posts = blogPosts.length;
     
-    // ページ数の概算 (静的定義 + 動的ドキュメント)
-    const staticPages = 5; // Home, Blog, Features, Contact, etc.
-    const totalPages = staticPages + topics;
+    // サイトマップツリーの生成
+    let siteMapTree = '';
+    const navigation = content.navigation || [];
+    
+    navigation.forEach((nav) => {
+      siteMapTree += `- [${nav.label}](${nav.href})\n`;
+      
+      // Docsの子要素
+      if (nav.href === '/docs' && docs.length > 0) {
+        docs.forEach((doc) => {
+           siteMapTree += `  - [${doc.title}](/docs/${doc.slug})\n`;
+        });
+      }
+      
+      // Blogの子要素
+      if (nav.href === '/blog' && blogPosts.length > 0) {
+        blogPosts.forEach((post) => {
+           siteMapTree += `  - [${post.title}](/blog/${post.slug})\n`;
+        });
+      }
+    });
+
+    const totalPages = 5 + topics + posts; // 概算
 
     return {
       siteName: content.site?.name || 'Code Voyage',
       description: content.site?.description || 'Mastering GitHub',
       topics,
+      posts,
       totalPages,
+      siteMapTree,
       dependencies: packageJson.dependencies || {},
       devDependencies: packageJson.devDependencies || {},
     };
@@ -53,7 +75,9 @@ function loadConfig() {
       siteName: 'Code Voyage', 
       description: 'Documentation Site',
       topics: 0, 
+      posts: 0, 
       totalPages: 0, 
+      siteMapTree: '',
       dependencies: {}, 
       devDependencies: {} 
     };
@@ -68,13 +92,13 @@ function generateReadme() {
   
   const deployUrl = `https://${owner}.github.io/${repo}/`;
   const actionsUrl = `https://github.com/${repoName}/actions`;
-  const issuesUrl = `https://github.com/${repoName}/issues`;
   
   const readme = `# 🚀 ${config.siteName}
 
 [![Deploy to GitHub Pages](https://github.com/${repoName}/workflows/Deploy%20to%20GitHub%20Pages/badge.svg)](${actionsUrl})
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Topics](https://img.shields.io/badge/Topics-${config.topics}-blue)
+![Posts](https://img.shields.io/badge/Posts-${config.posts}-purple)
 ![Status](https://img.shields.io/badge/Status-Live-green)
 
 > **${config.description}** - Powered by Next.js 15 & Cinematic UI
@@ -84,6 +108,14 @@ function generateReadme() {
 **🔗 [${deployUrl}](${deployUrl})**
 
 最新のデプロイ状況: [GitHub Actions](${actionsUrl})
+
+---
+
+## 🗺️ サイトマップ
+
+このサイトの構造は \`content.json\` から自動生成されています。
+
+${config.siteMapTree}
 
 ---
 
@@ -111,7 +143,8 @@ function generateReadme() {
 
 ## 📊 プロジェクト統計
 
-- **トピック数**: ${config.topics} Chapters
+- **ドキュメント数**: ${config.topics} Chapters
+- **ブログ記事数**: ${config.posts} Stories
 - **総ページ数**: 約 ${config.totalPages} ページ
 - **依存パッケージ**: ${Object.keys(config.dependencies).length} 個
 

@@ -4,6 +4,13 @@ interface Props {
   content: string;
 }
 
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export function MarkdownRenderer({ content }: Props) {
   const lines = content.split('\n');
   const elements: React.ReactNode[] = [];
@@ -40,18 +47,22 @@ export function MarkdownRenderer({ content }: Props) {
 
     // Headings
     if (line.startsWith('## ')) {
+      const text = line.slice(3);
+      const id = slugify(text);
       elements.push(
-        <h2 key={index} className="text-3xl font-bold text-white mt-12 mb-6">
-          {line.slice(3)}
+        <h2 key={index} id={id} className="text-3xl font-bold text-white mt-12 mb-6 scroll-mt-24 border-b border-white/10 pb-4">
+          {text}
         </h2>
       );
       return;
     }
     
     if (line.startsWith('### ')) {
+      const text = line.slice(4);
+      const id = slugify(text);
       elements.push(
-        <h3 key={index} className="text-2xl font-bold text-white mt-8 mb-4">
-          {line.slice(4)}
+        <h3 key={index} id={id} className="text-2xl font-bold text-white mt-8 mb-4 scroll-mt-24">
+          {text}
         </h3>
       );
       return;
