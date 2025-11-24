@@ -242,7 +242,7 @@ web-site/
 
 *このREADMEは自動生成されています。変更は \`scripts/generate-readme.js\` を編集してください。*
 
-*最終更新: ${new Date().toLocaleDateString('ja-JP')}*
+*最終更新: ${new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}*
 `;
 
   return readme;
